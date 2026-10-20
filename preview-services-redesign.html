@@ -60,12 +60,6 @@
 #tl-sv-top .sv-primary:hover{background:#dc7110;border-color:#dc7110;transform:translateY(-1px)}
 #tl-sv-top .sv-inline-link{display:inline-flex;gap:9px;align-items:center;text-decoration:none;color:#f1f1f1;font-size:13px;font-weight:750;min-height:44px}
 #tl-sv-top .sv-inline-link:hover{color:var(--sv-orange)}
-#tl-sv-top .sv-nav{background:#151a1d;color:white;border-bottom:2px solid #292f33}
-#tl-sv-top .sv-nav-inner{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
-#tl-sv-top .sv-nav a{display:flex;align-items:center;justify-content:center;gap:10px;min-height:73px;border-bottom:3px solid transparent;text-decoration:none;color:#e8ecee;font-size:12px;line-height:1.2;font-weight:750;white-space:nowrap;margin-bottom:-2px}
-#tl-sv-top .sv-nav a i{font-size:18px;color:#bdc4ca}
-#tl-sv-top .sv-nav a:hover,#tl-sv-top .sv-nav a:first-child{border-color:var(--sv-orange);color:var(--sv-orange)}
-#tl-sv-top .sv-nav a:hover i,#tl-sv-top .sv-nav a:first-child i{color:var(--sv-orange)}
 #tl-sv-top .sv-roofing{padding:78px 0 88px;background:var(--sv-cream);scroll-margin-top:90px}
 #tl-sv-top .sv-roof-grid{display:grid;grid-template-columns:minmax(0,1.16fr) minmax(0,.84fr);align-items:center;gap:clamp(32px,5vw,72px)}
 #tl-sv-top .sv-photo-wrap{height:510px;position:relative;overflow:hidden;border-radius:5px;background:#303c43;box-shadow:0 21px 43px rgba(20,25,30,.15)}
@@ -107,7 +101,6 @@
 #tl-sv-top .sv-card-dots span[aria-current="true"]{width:21px;background:var(--sv-orange)}
 #tl-sv-top .sv-anchor{scroll-margin-top:105px}
 @media(max-width:1090px){
- #tl-sv-top .sv-nav a{gap:7px;font-size:11px}
  #tl-sv-top .sv-roof-grid{gap:29px}
  #tl-sv-top .sv-photo-wrap{height:460px}
  #tl-sv-top .sv-cards{gap:12px}
@@ -122,9 +115,6 @@
  #tl-sv-top .sv-hero-content{padding-top:67px;padding-bottom:55px}
  #tl-sv-top .sv-hero h1{font-size:clamp(53px,11vw,76px);max-width:550px}
  #tl-sv-top .sv-hero p{max-width:450px;font-size:14px}
- #tl-sv-top .sv-nav-inner{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;scrollbar-width:none;overscroll-behavior-x:contain}
- #tl-sv-top .sv-nav-inner::-webkit-scrollbar{display:none}
- #tl-sv-top .sv-nav a{min-height:68px;flex:0 0 auto;padding:0 22px;font-size:12px;scroll-snap-align:start}
  #tl-sv-top .sv-roofing{padding:49px 0 59px}
  #tl-sv-top .sv-roof-grid{grid-template-columns:1fr;gap:25px}
  #tl-sv-top .sv-photo-wrap{height:350px}
@@ -228,7 +218,7 @@
   <img class="sv-hero-photo" src="assets/images/home-hero.png" alt="Illustrative home exterior and roof at dusk" />
   <div class="sv-hero-content sv-container">
    <span class="sv-eyebrow">OUR SERVICES</span>
-   <h1 id="sv-hero-title"><span>COMPLETE EXTERIOR</span><span>SOLUTIONS<span style="color:#F58620">.</span></span></h1>
+   <h1 id="sv-hero-title"><span>COMPLETE EXTERIOR</span><span>SOLUTIONS</span></h1>
    <p>Residential roofing is at the center of what we do. Tri-Lane also provides windows, garage doors, gutters, exterior painting and siding services.</p>
    <div class="sv-hero-actions">
     <a class="sv-primary" href="contact.html">CONTACT TRI-LANE <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
@@ -236,15 +226,6 @@
    </div>
   </div>
  </section>
- <nav class="sv-nav" aria-label="Jump to a service">
-  <div class="sv-container sv-nav-inner">
-   <a href="#roofing"><i class="fa-solid fa-house" aria-hidden="true"></i> Residential Roofing</a>
-   <a href="#windows"><i class="fa-regular fa-window-maximize" aria-hidden="true"></i> Windows</a>
-   <a href="#garage-doors"><i class="fa-solid fa-warehouse" aria-hidden="true"></i> Garage Doors</a>
-   <a href="#gutters"><i class="fa-solid fa-droplet" aria-hidden="true"></i> Gutters</a>
-   <a href="#paint-siding"><i class="fa-solid fa-paint-roller" aria-hidden="true"></i> Paint &amp; Siding</a>
-  </div>
- </nav>
  <section class="sv-roofing" id="roofing" aria-labelledby="sv-roof-title">
   <div class="sv-container sv-roof-grid">
    <div class="sv-photo-wrap">
