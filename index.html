@@ -71,6 +71,34 @@
 @media(max-width:1023px){.tl-wwd-grid{grid-template-columns:1fr}.tl-wwd-feature{min-height:430px}.tl-wwd-secondary{grid-template-rows:auto}}
 @media(max-width:600px){.tl-wwd-section{padding:54px 0 64px}.tl-wwd-wrap{padding:0 18px}.tl-wwd-secondary{grid-template-columns:1fr}.tl-wwd-card{min-height:220px}.tl-wwd-feature{min-height:560px}.tl-wwd-feature-content{padding:24px}.tl-wwd-heading p{font-size:14px}.tl-wwd-note{text-align:left}}
 @media(prefers-reduced-motion:reduce){.tl-wwd-card{transition:none}}
+
+/* MOBILE ONLY: swipeable services cards; approved desktop Bento is unchanged. */
+.tl-wwd-swipe-hint{display:none}
+@media (max-width:767px){
+  .tl-wwd-section{overflow:hidden}
+  .tl-wwd-heading{margin-bottom:14px}
+  .tl-wwd-swipe-hint{display:flex;justify-content:flex-end;align-items:center;gap:9px;margin:0 0 13px;color:#F58620;font-size:11px;line-height:1.4;letter-spacing:.13em;font-weight:800}
+  .tl-wwd-swipe-hint i{font-size:14px}
+  .tl-wwd-grid{display:flex;grid-template-columns:none;align-items:stretch;gap:14px;overflow-x:auto;overflow-y:hidden;padding:0 18px 8px 0;margin-right:-18px;scroll-snap-type:x mandatory;scroll-padding-inline:0;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tl-wwd-grid::-webkit-scrollbar{display:none}
+  .tl-wwd-secondary{display:contents}
+  .tl-wwd-feature,.tl-wwd-secondary>.tl-wwd-card{box-sizing:border-box;flex:0 0 min(82vw,350px);width:min(82vw,350px);height:510px;min-height:510px;scroll-snap-align:start;scroll-snap-stop:always}
+  .tl-wwd-feature{min-height:510px}
+  .tl-wwd-card h3{font-size:32px}
+  .tl-wwd-feature h3{font-size:clamp(36px,9vw,48px)}
+  .tl-wwd-card p{font-size:14px;max-width:32ch}
+  .tl-wwd-feature p{font-size:14px}
+  .tl-wwd-card .tl-wwd-content{padding:23px}
+  .tl-wwd-feature .tl-wwd-feature-content{padding:24px}
+  .tl-wwd-checks li{font-size:12.5px;padding:4px 0}
+  .tl-wwd-feature .tl-wwd-primary{max-width:100%;font-size:12px;line-height:1.35;text-align:center}
+  .tl-wwd-note{text-align:left}
+  .tl-wwd-grid:focus-visible{outline:2px solid #F58620;outline-offset:3px}
+}
+@media(max-width:360px){
+  .tl-wwd-feature,.tl-wwd-secondary>.tl-wwd-card{height:535px;min-height:535px}
+  .tl-wwd-feature{min-height:535px}
+}
 </style>
 </head><body class="flex flex-col min-h-screen antialiased" data-page="home"><div class="bg-brand-charcoal text-white text-xs py-2 px-4 border-b border-brand-slate/40 text-center sm:text-left">
 <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
@@ -206,7 +234,8 @@
    <h2>ROOFING EXPERTISE.<br>EXTERIOR SOLUTIONS<span class="tl-dot">.</span></h2>
    <p>Explore our dedicated roofing and residential exterior capabilities.</p>
   </div>
-  <div class="tl-wwd-grid">
+  <div class="tl-wwd-swipe-hint" aria-hidden="true"><span>SWIPE TO EXPLORE SERVICES</span><i class="fa-solid fa-arrow-right-long"></i></div>
+  <div class="tl-wwd-grid" tabindex="0" aria-label="Tri-Lane roofing and exterior service cards">
    <article class="tl-wwd-feature tl-wwd-card">
     <img src="assets/images/home-gallery-feature.jpg" alt="Illustrative residential roofing image for the design preview" loading="lazy">
     <div class="tl-wwd-card-shade"></div>
