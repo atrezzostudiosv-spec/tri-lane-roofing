@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+
+
+ Tailwind CSS via CDN 
+<link rel="stylesheet" href="assets/css/tailwind-fallback.css"/>
+<script src="https://cdn.tailwindcss.com"></script>
+ Google Fonts: Barlow Condensed &amp; Manrope 
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,800;1,700&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+ FontAwesome Icons for Industrial &amp; Exterior Representation 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#F58620',
+                            charcoal: '#171B1E',
+                            slate: '#344047',
+                            stone: '#F4F1EB',
+                            lightStone: '#FAF8F5'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['"Barlow Condensed"', 'sans-serif'],
+                        body: ['"Manrope"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+
+<title>Residential Roofing &amp; Exterior Services | Tri-Lane Roofing</title><meta content="Explore residential roofing, roof replacement, windows, garage doors, gutters, and exterior services from Tri-Lane Roofing and Construction in North Texas." name="description"/><link href="assets/css/custom.css" rel="stylesheet"/></head><body class="flex flex-col min-h-screen antialiased" data-page="home"><div class="bg-brand-charcoal text-white text-xs py-2 px-4 border-b border-brand-slate/40 text-center sm:text-left">
+<div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+<div class="flex items-center space-x-2">
+<span class="inline-block w-2 h-2 rounded-full bg-brand-orange animate-pulse"></span>
+<span class="tracking-wider text-stone-300 font-medium">SERVING NORTH TEXAS &amp; SURROUNDING REGIONS</span>
+</div>
+<div class="flex items-center space-x-6 text-stone-300 font-medium">
+<a class="hover:text-brand-orange transition-colors flex items-center gap-1.5" href="tel:8177173997">
+<i class="fa-solid fa-phone text-brand-orange text-2xl sm:text-xs"></i> DFW: (817) 717-3997
+                </a>
+<a class="hidden md:inline hover:text-brand-orange transition-colors" href="tel:5127175933">
+                    Austin: (512) 717-5933
+                </a>
+<a class="hidden lg:inline hover:text-brand-orange transition-colors" href="tel:4054667003">
+                    OK: (405) 466-7003
+                </a>
+</div>
+</div>
+</div><header class="sticky top-0 z-40 bg-brand-charcoal/95 backdrop-blur-md border-b border-white/10 shadow-xl">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<!-- Logo Block -->
+<a aria-label="Tri-Lane Roofing Home" class="flex items-center gap-3 group focus:outline-none" href="index.html">
+<img alt="Tri-Lane Roofing logo" class="tl-official-logo tl-header-logo" height="82" src="assets/images/trilane-logo-transparent.png" width="180"/>
+</a>
+<!-- Desktop Navigation Links -->
+<nav aria-label="Main Navigation" class="hidden md:flex items-center space-x-1 lg:space-x-2">
+<a class="nav-link text-stone-300 hover:text-white hover:bg-white/5 px-3 py-2 rounded-md text-sm font-semibold tracking-wide transition-all" data-nav="home" href="index.html">HOME</a>
+<a class="nav-link text-stone-300 hover:text-white hover:bg-white/5 px-3 py-2 rounded-md text-sm font-semibold tracking-wide transition-all" data-nav="about" href="about.html">ABOUT</a>
+<a class="nav-link text-stone-300 hover:text-white hover:bg-white/5 px-3 py-2 rounded-md text-sm font-semibold tracking-wide transition-all" data-nav="services" href="services.html">SERVICES</a>
+<a class="nav-link text-stone-300 hover:text-white hover:bg-white/5 px-3 py-2 rounded-md text-sm font-semibold tracking-wide transition-all" data-nav="gallery" href="gallery.html">GALLERY</a>
+<a class="nav-link text-stone-300 hover:text-white hover:bg-white/5 px-3 py-2 rounded-md text-sm font-semibold tracking-wide transition-all" data-nav="contact" href="contact.html">CONTACT</a>
+</nav>
+<!-- Header CTA Button -->
+<div class="hidden sm:flex items-center gap-3">
+<button class="bg-brand-orange hover:bg-orange-600 text-white font-display text-lg tracking-wider px-5 py-2.5 rounded hover:shadow-lg hover:shadow-brand-orange/20 transition-all duration-200 flex items-center gap-2" onclick="openInquiryModal()">
+<span>REQUEST A FREE INSPECTION</span>
+<i class="fa-solid fa-arrow-right text-xs"></i>
+</button>
+</div>
+<!-- Mobile Menu Button -->
+<div class="flex md:hidden">
+<button aria-controls="mobile-menu" aria-expanded="false" class="text-stone-300 hover:text-white p-2 rounded-md focus:outline-none" id="mobile-menu-btn" type="button">
+<span class="sr-only">Open main menu</span>
+<i class="fa-solid fa-bars text-2xl" id="menu-icon-open"></i>
+<i class="fa-solid fa-xmark text-2xl hidden" id="menu-icon-close"></i>
+</button>
+</div>
+</div>
+</div>
+<!-- Mobile Navigation Menu -->
+<div class="hidden md:hidden bg-brand-charcoal border-b border-white/10 px-4 pt-3 pb-6 space-y-2" id="mobile-menu">
+<a class="mobile-nav-link block text-stone-200 hover:text-brand-orange font-display text-xl tracking-wider py-2 px-3 rounded" data-nav="home" href="index.html">HOME</a>
+<a class="mobile-nav-link block text-stone-200 hover:text-brand-orange font-display text-xl tracking-wider py-2 px-3 rounded" data-nav="about" href="about.html">ABOUT</a>
+<a class="mobile-nav-link block text-stone-200 hover:text-brand-orange font-display text-xl tracking-wider py-2 px-3 rounded" data-nav="services" href="services.html">SERVICES</a>
+<a class="mobile-nav-link block text-stone-200 hover:text-brand-orange font-display text-xl tracking-wider py-2 px-3 rounded" data-nav="gallery" href="gallery.html">GALLERY</a>
+<a class="mobile-nav-link block text-stone-200 hover:text-brand-orange font-display text-xl tracking-wider py-2 px-3 rounded" data-nav="contact" href="contact.html">CONTACT</a>
+<div class="pt-4 border-t border-white/10 flex flex-col gap-3">
+<button class="w-full bg-brand-orange text-white font-display text-lg py-3 rounded text-center font-bold" onclick="openInquiryModal(); closeMobileMenu();">
+                    REQUEST A FREE INSPECTION
+                </button>
+<a class="text-stone-300 text-center text-sm font-semibold flex items-center justify-center gap-2 py-2" href="tel:8177173997">
+<i class="fa-solid fa-phone text-brand-orange"></i> Call DFW: (817) 717-3997
+                </a>
+</div>
+</div>
+</header><main class="flex-grow relative" id="app-content"><section class="page-view page-visible" id="page-home">
+<!-- Hero Section -->
+<div class="relative bg-brand-charcoal text-white py-20 lg:py-32 overflow-hidden border-b border-brand-slate">
+<div class="absolute inset-0 z-0 opacity-25">
+<img alt="Illustrative residential roofing hero image for Tri-Lane website mockup" class="w-full h-full object-cover" src="assets/images/home-hero.png"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-r from-brand-charcoal via-brand-charcoal/90 to-transparent z-0"></div>
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-3xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-brand-orange/20 border border-brand-orange/40 rounded text-brand-orange text-xs font-bold tracking-widest uppercase mb-6">
+<i class="fa-solid fa-shield-halved"></i> Tri-Lane Roofing &amp; Construction
+                        </div>
+<h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-none mb-6">
+                            RESIDENTIAL ROOFING.<br/><span class="text-brand-orange">BUILT ON TRUST.</span>
+</h1>
+<p class="text-stone-300 text-lg sm:text-xl font-normal mb-8 leading-relaxed max-w-2xl">
+                            From new roof installations to replacements following storm damage, Tri-Lane Roofing and Construction provides dependable roofing and exterior services for homeowners across North Texas.
+                        </p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="bg-brand-orange hover:bg-orange-600 text-white font-display text-xl tracking-wider px-8 py-4 rounded shadow-lg transition-all text-center flex items-center justify-center gap-3" onclick="openInquiryModal()">
+<span>REQUEST A FREE INSPECTION</span>
+<i class="fa-solid fa-arrow-right text-sm"></i>
+</button>
+<a class="bg-brand-slate/60 hover:bg-brand-slate text-white border border-stone-600 font-display text-xl tracking-wider px-8 py-4 rounded transition-all text-center flex items-center justify-center" href="services.html">
+                                EXPLORE OUR SERVICES
+                            </a>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 02: Company Introduction -->
+<div class="py-20 bg-brand-stone text-brand-charcoal border-b border-stone-300">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-7">
+<span class="text-brand-orange font-bold text-sm tracking-widest uppercase block mb-2">WHO WE ARE</span>
+<h2 class="text-4xl sm:text-5xl font-bold mb-6 text-brand-charcoal">ROOFING IS OUR SPECIALTY.</h2>
+<p class="text-lg text-stone-700 mb-4 leading-relaxed">
+                                Your roof is an essential part of your home. At Tri-Lane, residential roofing is at the center of what we do.
+                            </p>
+<p class="text-stone-700 mb-6 leading-relaxed">
+                                We work with homeowners, custom home builders, and developers, providing roofing services alongside exterior renovations and general construction work. Our approach is centered on quality workmanship, dependable communication, and helping customers understand each stage of their project.
+                            </p>
+<a class="inline-flex items-center gap-2 font-display text-lg font-bold text-brand-charcoal hover:text-brand-orange transition-colors border-b-2 border-brand-orange pb-1" href="about.html">
+                                GET TO KNOW TRI-LANE <i class="fa-solid fa-chevron-right text-xs"></i>
+</a>
+</div>
+<div class="lg:col-span-5">
+<div class="relative rounded-lg overflow-hidden shadow-2xl border-4 border-white">
+<img alt="Illustrative roofing craftsmanship image for Tri-Lane website mockup" class="w-full h-80 lg:h-96 object-cover" src="assets/images/home-intro.png"/>
+<div class="absolute bottom-0 inset-x-0 bg-brand-charcoal/90 text-white p-4">
+<p class="font-display text-lg tracking-wide text-brand-orange">DURABILITY &amp; INTEGRITY</p>
+<p class="text-xs text-stone-300">Engineered for North Texas weather challenges</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 03: Services Bento Grid -->
+<div class="py-20 bg-brand-charcoal text-white">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-3xl mx-auto mb-16">
+<span class="text-brand-orange font-bold text-sm tracking-widest uppercase block mb-2">WHAT WE DO</span>
+<h2 class="text-4xl sm:text-5xl font-bold mb-4">ROOFING EXPERTISE. EXTERIOR SOLUTIONS.</h2>
+<p class="text-stone-400">Explore our dedicated roofing and residential exterior capabilities.</p>
+</div>
+<!-- Asymmetrical Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Dominant Roofing Module (8 Cols) -->
+<div class="md:col-span-8 bg-brand-slate/40 border border-brand-slate rounded-lg p-8 relative overflow-hidden group hover:border-brand-orange transition-all duration-300">
+<div class="relative z-10 flex flex-col h-full justify-between">
+<div>
+<div class="w-12 h-12 rounded bg-brand-orange/20 text-brand-orange flex items-center justify-center text-2xl mb-6">
+<i class="fa-solid fa-house-chimney-crack"></i>
+</div>
+<span class="text-brand-orange font-mono text-xs font-bold tracking-widest block mb-1">PRIMARY SPECIALTY</span>
+<h3 class="text-3xl font-bold mb-3">RESIDENTIAL ROOFING</h3>
+<p class="text-stone-300 mb-6 max-w-xl">
+                                        New roof installations and roof replacement following storm damage, including architectural shingles, metal, and slate roofing systems. Complete inspection and restoration guidance.
+                                    </p>
+</div>
+<a class="inline-flex items-center gap-2 text-brand-orange font-display text-lg font-bold group-hover:translate-x-2 transition-transform" href="services.html">
+                                    LEARN MORE ABOUT ROOFING <i class="fa-solid fa-arrow-right text-xs"></i>
+</a>
+</div>
+</div>
+<!-- Windows Module (4 Cols) -->
+<div class="md:col-span-4 bg-brand-slate/40 border border-brand-slate rounded-lg p-8 flex flex-col justify-between group hover:border-brand-orange transition-all duration-300">
+<div>
+<div class="w-12 h-12 rounded bg-stone-700 text-brand-orange flex items-center justify-center text-2xl mb-6">
+<i class="fa-regular fa-window-maximize"></i>
+</div>
+<h3 class="text-2xl font-bold mb-3">WINDOWS</h3>
+<p class="text-stone-300 text-sm mb-6">
+                                    Window installation and replacement with a focus on home comfort, energy efficiency, and curb appeal.
+                                </p>
+</div>
+<a class="text-stone-300 hover:text-brand-orange text-sm font-bold flex items-center gap-2" href="services.html">
+                                VIEW WINDOW SERVICES <i class="fa-solid fa-arrow-right text-xs"></i>
+</a>
+</div>
+<!-- Garage Doors (4 Cols) -->
+<div class="md:col-span-4 bg-brand-slate/40 border border-brand-slate rounded-lg p-8 flex flex-col justify-between group hover:border-brand-orange transition-all duration-300">
+<div>
+<div class="w-12 h-12 rounded bg-stone-700 text-brand-orange flex items-center justify-center text-2xl mb-6">
+<i class="fa-solid fa-warehouse"></i>
+</div>
+<h3 class="text-2xl font-bold mb-3">GARAGE DOORS</h3>
+<p class="text-stone-300 text-sm mb-6">
+                                    Garage door repairs and replacements offered as part of storm damage restoration projects.
+                                </p>
+</div>
+<a class="text-stone-300 hover:text-brand-orange text-sm font-bold flex items-center gap-2" href="services.html">
+                                VIEW GARAGE DOOR SERVICES <i class="fa-solid fa-arrow-right text-xs"></i>
+</a>
+</div>
+<!-- Gutters (4 Cols) -->
+<div class="md:col-span-4 bg-brand-slate/40 border border-brand-slate rounded-lg p-8 flex flex-col justify-between group hover:border-brand-orange transition-all duration-300">
+<div>
+<div class="w-12 h-12 rounded bg-stone-700 text-brand-orange flex items-center justify-center text-2xl mb-6">
+<i class="fa-solid fa-water-lower"></i>
+</div>
+<h3 class="text-2xl font-bold mb-3">GUTTERS</h3>
+<p class="text-stone-300 text-sm mb-6">
+                                    Gutter installation and repairs to support effective drainage and protect your home from water runoff.
+                                </p>
+</div>
+<a class="text-stone-300 hover:text-brand-orange text-sm font-bold flex items-center gap-2" href="services.html">
+                                VIEW GUTTER SERVICES <i class="fa-solid fa-arrow-right text-xs"></i>
+</a>
+</div>
+<!-- Paint & Siding (4 Cols) -->
+<div class="md:col-span-4 bg-brand-slate/40 border border-brand-slate rounded-lg p-8 flex flex-col justify-between group hover:border-brand-orange transition-all duration-300">
+<div>
+<div class="w-12 h-12 rounded bg-stone-700 text-brand-orange flex items-center justify-center text-2xl mb-6">
+<i class="fa-solid fa-paint-roller"></i>
+</div>
+<h3 class="text-2xl font-bold mb-3">PAINT &amp; SIDING</h3>
+<p class="text-stone-300 text-sm mb-6">
+                                    Exterior painting and siding services to improve and protect your home's exterior envelope.
+                                </p>
+</div>
+<a class="text-stone-300 hover:text-brand-orange text-sm font-bold flex items-center gap-2" href="services.html">
+                                VIEW PAINT &amp; SIDING <i class="fa-solid fa-arrow-right text-xs"></i>
+</a>
+</div>
+</div>
+<div class="mt-12 text-center">
+<a class="inline-block bg-brand-orange hover:bg-orange-600 text-white font-display text-lg tracking-wider px-8 py-3 rounded transition-all" href="services.html">
+                            EXPLORE ALL SERVICES
+                        </a>
+</div>
+</div>
+</div>
+<!-- Section 04: Why Tri-Lane -->
+<div class="py-20 bg-brand-stone text-brand-charcoal">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-3xl mx-auto mb-16">
+<span class="text-brand-orange font-bold text-sm tracking-widest uppercase block mb-2">OUR APPROACH</span>
+<h2 class="text-4xl sm:text-5xl font-bold">EXPERIENCE, COMMUNICATION, AND CRAFTSMANSHIP.</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+<div class="bg-white p-6 rounded shadow-sm border border-stone-200">
+<div class="text-brand-orange text-2xl mb-4"><i class="fa-solid fa-location-dot"></i></div>
+<h3 class="text-xl font-bold mb-2">Locally Owned &amp; Operated</h3>
+<p class="text-stone-600 text-sm">A locally operated business with a focus on the communities it serves across Texas.</p>
+</div>
+<div class="bg-white p-6 rounded shadow-sm border border-stone-200">
+<div class="text-brand-orange text-2xl mb-4"><i class="fa-solid fa-user-gear"></i></div>
+<h3 class="text-xl font-bold mb-2">Industry Experience</h3>
+<p class="text-stone-600 text-sm">Tri-Lane describes its team as having decades of combined industry experience.</p>
+</div>
+<div class="bg-white p-6 rounded shadow-sm border border-stone-200">
+<div class="text-brand-orange text-2xl mb-4"><i class="fa-solid fa-hammer"></i></div>
+<h3 class="text-xl font-bold mb-2">Quality &amp; Craftsmanship</h3>
+<p class="text-stone-600 text-sm">Uncompromising attention to workmanship and project execution quality.</p>
+</div>
+<div class="bg-white p-6 rounded shadow-sm border border-stone-200">
+<div class="text-brand-orange text-2xl mb-4"><i class="fa-solid fa-comments"></i></div>
+<h3 class="text-xl font-bold mb-2">Clear Communication</h3>
+<p class="text-stone-600 text-sm">An emphasis on keeping customers informed throughout the roofing process.</p>
+</div>
+<div class="bg-white p-6 rounded shadow-sm border border-stone-200">
+<div class="text-brand-orange text-2xl mb-4"><i class="fa-solid fa-file-contract"></i></div>
+<h3 class="text-xl font-bold mb-2">Insurance Support</h3>
+<p class="text-stone-600 text-sm">Assistance with storm damage documentation and communication with insurance adjusters.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 05: Process Preview -->
+<div class="py-20 bg-brand-charcoal text-white border-t border-brand-slate">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+<div>
+<span class="text-brand-orange font-bold text-sm tracking-widest uppercase block mb-2">FROM INSPECTION TO COMPLETION</span>
+<h2 class="text-4xl sm:text-5xl font-bold">KNOW WHAT TO EXPECT.</h2>
+</div>
+<a class="mt-4 md:mt-0 text-brand-orange font-display text-lg font-bold flex items-center gap-2 hover:underline" href="services.html">
+                            LEARN ABOUT OUR FULL PROCESS <i class="fa-solid fa-arrow-right text-xs"></i>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-brand-slate/30 p-8 rounded border-l-4 border-brand-orange">
+<span class="font-display text-4xl text-brand-orange font-bold block mb-2">01</span>
+<h3 class="text-2xl font-bold mb-3">Inspection</h3>
+<p class="text-stone-300 text-sm leading-relaxed">
+                                The roofing process begins with a conversation and an on-site inspection to assess the property and document relevant damage.
+                            </p>
+</div>
+<div class="bg-brand-slate/30 p-8 rounded border-l-4 border-stone-500">
+<span class="font-display text-4xl text-stone-400 font-bold block mb-2">02</span>
+<h3 class="text-2xl font-bold mb-3">Project Planning</h3>
+<p class="text-stone-300 text-sm leading-relaxed">
+                                The team reviews the proposed work, timeline, and costs, including applicable insurance documentation.
+                            </p>
+</div>
+<div class="bg-brand-slate/30 p-8 rounded border-l-4 border-stone-500">
+<span class="font-display text-4xl text-stone-400 font-bold block mb-2">03</span>
+<h3 class="text-2xl font-bold mb-3">Installation &amp; Review</h3>
+<p class="text-stone-300 text-sm leading-relaxed">
+                                Work moves into professional installation, final quality inspection, and a complete customer walkthrough.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 06: Featured Work -->
+<div class="py-20 bg-brand-stone text-brand-charcoal">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+<div>
+<span class="text-brand-orange font-bold text-sm tracking-widest uppercase block mb-2">SELECTED WORK</span>
+<h2 class="text-4xl sm:text-5xl font-bold">SEE OUR WORK.</h2>
+</div>
+<a class="mt-4 md:mt-0 bg-brand-charcoal text-white hover:bg-brand-orange font-display text-lg px-6 py-2.5 rounded transition-colors" href="gallery.html">
+                            VIEW FULL GALLERY
+                        </a>
+</div>
+<div aria-label="Conceptual image gallery for the Home design" class="tl-featured-grid">
+<a aria-label="Explore Gallery — roofing concept image" class="tl-featured-tile tl-featured-tile-main" href="gallery.html">
+<img alt="AI-generated illustration of a residence with a dark shingle roof at sunset" decoding="async" loading="lazy" src="assets/images/home-gallery-feature.jpg"/>
+<span class="tl-featured-overlay"><small>ROOFING CONCEPT</small><strong>Residential Roofing</strong><em>Explore Gallery <i aria-hidden="true" class="fa-solid fa-arrow-up-right-from-square"></i></em></span>
+</a>
+<a aria-label="Explore Gallery — architectural roofline concept image" class="tl-featured-tile" href="gallery.html">
+<img alt="AI-generated illustration of a suburban home with architectural rooflines" decoding="async" loading="lazy" src="assets/images/home-gallery-secondary.jpg"/>
+<span class="tl-featured-overlay"><small>DESIGN CONCEPT</small><strong>Architectural Rooflines</strong><em>Explore Gallery <i aria-hidden="true" class="fa-solid fa-arrow-up-right-from-square"></i></em></span>
+</a>
+<a aria-label="Explore Gallery — residential exterior concept image" class="tl-featured-tile" href="gallery.html">
+<img alt="AI-generated illustration of a classic residential exterior and roof" decoding="async" loading="lazy" src="assets/images/home-gallery-detail.jpg"/>
+<span class="tl-featured-overlay"><small>VISUAL PREVIEW</small><strong>Exterior Details</strong><em>Explore Gallery <i aria-hidden="true" class="fa-solid fa-arrow-up-right-from-square"></i></em></span>
+</a>
+</div>
+<p class="tl-featured-disclaimer">Illustrative AI-generated imagery for design preview only · Not completed Tri-Lane projects.</p>
+</div>
+</div>
+<!-- Section 07: Customer Feedback -->
+<div class="py-20 bg-white text-brand-charcoal border-t border-stone-200">
+<div class="max-w-4xl mx-auto px-4 text-center">
+<span class="text-brand-orange font-bold text-sm tracking-widest uppercase block mb-2">CUSTOMER FEEDBACK</span>
+<h2 class="text-3xl sm:text-4xl font-bold mb-8">WHAT CUSTOMERS HAVE SHARED.</h2>
+<blockquote class="italic text-xl sm:text-2xl text-stone-700 leading-relaxed mb-6 font-light">
+                        "Tri-Lane Roofing handled our roof replacement with complete professionalism. They guided us through every step of the process and delivered exceptional craftsmanship on time."
+                    </blockquote>
+<p class="font-bold text-brand-charcoal tracking-wide font-display text-lg">
+                        — JESSICA M. <span class="text-brand-orange font-normal">| Frisco, TX</span>
+</p>
+</div>
+</div>
+<!-- Section 08: Final CTA -->
+<div class="py-20 bg-brand-charcoal text-white text-center border-t border-brand-slate">
+<div class="max-w-4xl mx-auto px-4">
+<h2 class="text-4xl sm:text-6xl font-bold mb-6">LET'S TALK ABOUT YOUR ROOF.</h2>
+<p class="text-stone-300 text-lg mb-8 max-w-2xl mx-auto">
+                        Whether you're planning a new roof or dealing with storm damage, start by contacting the specialists at Tri-Lane.
+                    </p>
+<div class="flex flex-col sm:flex-row justify-center gap-4">
+<button class="bg-brand-orange hover:bg-orange-600 text-white font-display text-xl px-8 py-4 rounded shadow-lg transition-all" onclick="openInquiryModal()">
+                            REQUEST A FREE INSPECTION
+                        </button>
+<a class="bg-stone-800 hover:bg-stone-700 text-white font-display text-xl px-8 py-4 rounded transition-all" href="contact.html">
+                            CONTACT OUR TEAM
+                        </a>
+</div>
+</div>
+</div>
+</section></main><footer class="bg-brand-charcoal text-white border-t border-brand-slate">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12">
+<!-- Col 1: Brand (4 cols) -->
+<div class="lg:col-span-4 space-y-4">
+<div class="flex items-center gap-3">
+<img alt="Tri-Lane Roofing logo" class="tl-official-logo tl-footer-logo" height="87" src="assets/images/trilane-logo-transparent.png" width="190"/>
+</div>
+<p class="text-stone-400 text-sm leading-relaxed max-w-sm">
+                        Tri-Lane Roofing and Construction provides residential roofing and exterior construction services across North Texas and surrounding regions.
+                    </p>
+</div>
+<!-- Col 2: Navigation (3 cols) -->
+<div class="lg:col-span-3">
+<h4 class="font-display text-lg font-bold text-brand-orange mb-4 tracking-wider">NAVIGATION</h4>
+<ul class="space-y-2 text-stone-300 text-sm">
+<li><a class="hover:text-brand-orange transition-colors" href="index.html">Home</a></li>
+<li><a class="hover:text-brand-orange transition-colors" href="about.html">About Us</a></li>
+<li><a class="hover:text-brand-orange transition-colors" href="services.html">Roofing &amp; Exterior Services</a></li>
+<li><a class="hover:text-brand-orange transition-colors" href="gallery.html">Project Gallery</a></li>
+<li><a class="hover:text-brand-orange transition-colors" href="contact.html">Contact &amp; Offices</a></li>
+</ul>
+</div>
+<!-- Col 3: Offices (5 cols) -->
+<div class="lg:col-span-5">
+<h4 class="font-display text-lg font-bold text-brand-orange mb-4 tracking-wider">OFFICE CONTACTS</h4>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-stone-300">
+<div>
+<span class="font-bold text-white block">DFW / Headquarters</span>
+<p class="text-stone-400">PO Box 1199, Argyle, TX 76226</p>
+<a class="text-brand-orange font-bold hover:underline" href="tel:8177173997">(817) 717-3997</a>
+</div>
+<div>
+<span class="font-bold text-white block">Austin Office</span>
+<a class="text-brand-orange font-bold hover:underline" href="tel:5127175933">(512) 717-5933</a>
+</div>
+<div class="sm:col-span-2 pt-2 border-t border-brand-slate/50">
+<span class="font-bold text-white block">Oklahoma Office</span>
+<a class="text-brand-orange font-bold hover:underline" href="tel:4054667003">(405) 466-7003</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Bottom -->
+<div class="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center text-xs text-stone-400 gap-4">
+<p>© 2026 Tri-Lane Roofing and Construction. All rights reserved.</p>
+<div class="flex gap-4">
+<button class="text-brand-orange hover:underline font-bold" onclick="openInquiryModal()">Request Inspection</button>
+<span>|</span>
+<a class="hover:text-white" href="contact.html">Contact Page</a>
+</div>
+</div>
+</div>
+</footer><div aria-label="Image Lightbox" aria-modal="true" class="fixed inset-0 z-50 bg-brand-charcoal/95 backdrop-blur-md hidden flex flex-col justify-between p-4 sm:p-8" id="gallery-lightbox" role="dialog">
+<div class="flex justify-between items-center text-white max-w-7xl mx-auto w-full">
+<span class="font-mono text-sm text-brand-orange font-bold" id="lightbox-counter">1 / 6</span>
+<button aria-label="Close Lightbox" class="text-stone-300 hover:text-white text-3xl focus:outline-none p-2" onclick="closeLightbox()">
+<i class="fa-solid fa-xmark"></i>
+</button>
+</div>
+<div class="relative flex-grow flex items-center justify-center my-4 max-w-6xl mx-auto w-full overflow-hidden">
+<button aria-label="Previous Image" class="absolute left-2 z-10 text-white bg-brand-charcoal/80 hover:bg-brand-orange p-4 rounded-full transition-colors focus:outline-none" onclick="prevLightboxImage()">
+<i class="fa-solid fa-chevron-left text-xl"></i>
+</button>
+<img alt="Enlarged Project View" class="max-h-[75vh] max-w-full object-contain rounded border border-brand-slate shadow-2xl" id="lightbox-img" src=""/>
+<button aria-label="Next Image" class="absolute right-2 z-10 text-white bg-brand-charcoal/80 hover:bg-brand-orange p-4 rounded-full transition-colors focus:outline-none" onclick="nextLightboxImage()">
+<i class="fa-solid fa-chevron-right text-xl"></i>
+</button>
+</div>
+<div class="text-center text-white max-w-2xl mx-auto">
+<h3 class="font-display text-2xl font-bold text-brand-orange" id="lightbox-title"></h3>
+<p class="text-stone-300 text-sm mt-1" id="lightbox-desc"></p>
+</div>
+</div><div aria-modal="true" class="fixed inset-0 z-50 bg-brand-charcoal/80 backdrop-blur-sm hidden flex items-center justify-center p-4" id="inquiry-modal" role="dialog">
+<div class="bg-white rounded-lg shadow-2xl max-w-2xl w-full p-6 sm:p-8 relative border border-stone-300 max-h-[90vh] overflow-y-auto text-brand-charcoal">
+<button aria-label="Close Modal" class="absolute top-4 right-4 text-stone-400 hover:text-brand-charcoal text-2xl" onclick="closeInquiryModal()">
+<i class="fa-solid fa-xmark"></i>
+</button>
+<!-- Step Indicator -->
+<div class="mb-6">
+<span class="text-brand-orange font-bold text-xs tracking-widest uppercase block mb-1">PROJECT INQUIRY ASSISTANT</span>
+<h3 class="text-2xl font-bold" id="assistant-title">What do you need help with?</h3>
+<div class="w-full bg-stone-200 h-2 rounded-full mt-4 overflow-hidden">
+<div class="bg-brand-orange h-full w-1/4 transition-all duration-300" id="assistant-progress"></div>
+</div>
+</div>
+<!-- Wizard Steps Container -->
+<form id="wizard-form" onsubmit="event.preventDefault();">
+<!-- STEP 1: Service -->
+<div class="wizard-step" id="wizard-step-1">
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 my-4">
+<button class="wiz-srv-btn border-2 border-stone-200 hover:border-brand-orange p-4 rounded text-center font-bold text-sm hover:bg-brand-stone transition-all flex flex-col items-center gap-2" onclick="selectWizardService('Roofing')" type="button">
+<i class="fa-solid fa-house-chimney text-2xl text-brand-orange"></i> Roofing
+                        </button>
+<button class="wiz-srv-btn border-2 border-stone-200 hover:border-brand-orange p-4 rounded text-center font-bold text-sm hover:bg-brand-stone transition-all flex flex-col items-center gap-2" onclick="selectWizardService('Windows')" type="button">
+<i class="fa-regular fa-window-maximize text-2xl text-brand-orange"></i> Windows
+                        </button>
+<button class="wiz-srv-btn border-2 border-stone-200 hover:border-brand-orange p-4 rounded text-center font-bold text-sm hover:bg-brand-stone transition-all flex flex-col items-center gap-2" onclick="selectWizardService('Garage Doors')" type="button">
+<i class="fa-solid fa-warehouse text-2xl text-brand-orange"></i> Garage Doors
+                        </button>
+<button class="wiz-srv-btn border-2 border-stone-200 hover:border-brand-orange p-4 rounded text-center font-bold text-sm hover:bg-brand-stone transition-all flex flex-col items-center gap-2" onclick="selectWizardService('Gutters')" type="button">
+<i class="fa-solid fa-water-lower text-2xl text-brand-orange"></i> Gutters
+                        </button>
+<button class="wiz-srv-btn border-2 border-stone-200 hover:border-brand-orange p-4 rounded text-center font-bold text-sm hover:bg-brand-stone transition-all flex flex-col items-center gap-2" onclick="selectWizardService('Paint &amp; Siding')" type="button">
+<i class="fa-solid fa-paint-roller text-2xl text-brand-orange"></i> Paint &amp; Siding
+                        </button>
+<button class="wiz-srv-btn border-2 border-stone-200 hover:border-brand-orange p-4 rounded text-center font-bold text-sm hover:bg-brand-stone transition-all flex flex-col items-center gap-2" onclick="selectWizardService('Not Sure Yet')" type="button">
+<i class="fa-solid fa-circle-question text-2xl text-brand-orange"></i> Not Sure Yet
+                        </button>
+</div>
+</div>
+<!-- STEP 2: Situation -->
+<div class="wizard-step hidden" id="wizard-step-2">
+<p class="text-sm text-stone-600 mb-4">Select the primary nature of your inquiry:</p>
+<div class="grid grid-cols-2 gap-3 mb-4">
+<label class="border p-3 rounded flex items-center gap-2 cursor-pointer hover:bg-stone-50 text-sm font-semibold">
+<input checked="" class="accent-brand-orange" name="wiz-type" type="radio" value="Storm Damage"/> Storm Damage
+                        </label>
+<label class="border p-3 rounded flex items-center gap-2 cursor-pointer hover:bg-stone-50 text-sm font-semibold">
+<input class="accent-brand-orange" name="wiz-type" type="radio" value="New Installation"/> New Installation
+                        </label>
+<label class="border p-3 rounded flex items-center gap-2 cursor-pointer hover:bg-stone-50 text-sm font-semibold">
+<input class="accent-brand-orange" name="wiz-type" type="radio" value="Repair or Replacement"/> Repair / Replacement
+                        </label>
+<label class="border p-3 rounded flex items-center gap-2 cursor-pointer hover:bg-stone-50 text-sm font-semibold">
+<input class="accent-brand-orange" name="wiz-type" type="radio" value="General Question"/> General Question
+                        </label>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase mb-1">Additional Notes</label>
+<textarea class="w-full border p-2 rounded text-sm" id="wiz-notes" placeholder="Briefly describe what you are seeing or needing..." rows="3"></textarea>
+</div>
+</div>
+<!-- STEP 3: Location -->
+<div class="wizard-step hidden space-y-4" id="wizard-step-3">
+<p class="text-sm text-stone-600">Provide your property location so our team can verify local availability:</p>
+<div>
+<label class="block text-xs font-bold uppercase mb-1">City *</label>
+<input class="w-full border p-3 rounded text-sm" id="wiz-city" required="" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase mb-1">ZIP Code *</label>
+<input class="w-full border p-3 rounded text-sm" id="wiz-zip" required="" type="text"/>
+</div>
+</div>
+<!-- STEP 4: Contact & Summary -->
+<div class="wizard-step hidden space-y-4" id="wizard-step-4">
+<div class="bg-brand-stone p-4 rounded text-xs text-stone-700 space-y-1 border border-stone-300">
+<p class="font-bold text-brand-charcoal text-sm mb-1">INQUIRY SUMMARY</p>
+<p><strong>Service:</strong> <span id="sum-service"></span></p>
+<p><strong>Type:</strong> <span id="sum-type"></span></p>
+<p><strong>Location:</strong> <span id="sum-location"></span></p>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase mb-1">Full Name *</label>
+<input class="w-full border p-3 rounded text-sm" id="wiz-name" required="" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase mb-1">Phone or Email *</label>
+<input class="w-full border p-3 rounded text-sm" id="wiz-contact" placeholder="Phone number or email address" required="" type="text"/>
+</div>
+<div class="p-3 rounded text-xs hidden" id="wiz-status"></div>
+</div>
+<!-- Wizard Controls -->
+<div class="flex justify-between items-center mt-8 pt-4 border-t border-stone-200">
+<button class="px-5 py-2 border rounded font-bold text-sm text-stone-600 hover:bg-stone-100 hidden" id="wiz-prev-btn" onclick="wizardPrev()" type="button">
+                        Previous
+                    </button>
+<button class="ml-auto px-6 py-2.5 bg-brand-orange text-white rounded font-bold text-sm hover:bg-orange-600 transition-colors" id="wiz-next-btn" onclick="wizardNext()" type="button">
+                        Continue
+                    </button>
+</div>
+</form>
+</div>
+</div><script src="assets/js/site.js"></script></body></html>
