@@ -556,7 +556,7 @@
  const dots=Array.from(document.querySelectorAll('#tl-sv-top .sv-card-dots span'));
  const prev=document.getElementById('sv-card-prev'),next=document.getElementById('sv-card-next');
  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
- const index=()=>cards.reduce((best,c,i)=>Math.abs(c.offsetLeft-track.scrollLeft)<Math.abs(cards[best].offsetLeft-track.scrollLeft)?i:best,0);
+ const index=()=>cards.reduce((best,c,i)=>Math.abs((c.offsetLeft-cards[0].offsetLeft)-track.scrollLeft)<Math.abs((cards[best].offsetLeft-cards[0].offsetLeft)-track.scrollLeft)?i:best,0);
  const update=()=>{const n=index();dots.forEach((d,i)=>{if(i===n)d.setAttribute('aria-current','true');else d.removeAttribute('aria-current')});prev.disabled=n===0;next.disabled=n===cards.length-1;prev.style.opacity=n===0?'.45':'1';next.style.opacity=n===cards.length-1?'.45':'1';};
  function go(delta){const n=Math.max(0,Math.min(cards.length-1,index()+delta));track.scrollTo({left:cards[n].offsetLeft-cards[0].offsetLeft,behavior:reduced.matches?'instant':'smooth'});}
  prev?.addEventListener('click',()=>go(-1));next?.addEventListener('click',()=>go(1));
