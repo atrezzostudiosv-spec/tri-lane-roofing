@@ -116,6 +116,28 @@
  #at-gallery-viewer .at-gallery-project-thumbs button{transition:none}
  #at-gallery-viewer .at-gallery-project-thumbs button.is-selected{transform:none}
 }
+
+/* Fix: gallery viewer is portalled to BODY so page-view transform does not trap fixed positioning. */
+#at-gallery-viewer{
+  position:fixed;inset:0;width:100%;height:100vh;height:100dvh;
+  max-height:100dvh;overflow:hidden;z-index:120;display:flex;
+  flex-direction:column;justify-content:space-between;
+}
+#at-gallery-viewer .at-gallery-viewer-top{flex:0 0 auto}
+#at-gallery-viewer .at-gallery-viewer-middle{flex:1 1 0;min-height:0;overflow:hidden;padding:10px 0}
+#at-gallery-viewer .at-gallery-viewer-middle img{height:100%;max-height:100%;min-height:0;object-fit:contain}
+#at-gallery-viewer .at-gallery-viewer-bottom{flex:0 0 auto}
+@media(max-height:500px) and (orientation:landscape){
+ #at-gallery-viewer{padding:6px 12px}
+ #at-gallery-viewer .at-gallery-viewer-top button{width:34px;height:34px}
+ #at-gallery-viewer .at-gallery-viewer-middle{padding:3px 0}
+ #at-gallery-viewer .at-gallery-viewer-bottom{padding:0 0 2px;gap:3px}
+ #at-gallery-viewer .at-gallery-viewer-bottom h3{font-size:20px;line-height:1}
+ #at-gallery-viewer .at-gallery-viewer-bottom .at-gallery-viewer-progress{font-size:10px}
+ #at-gallery-viewer .at-gallery-project-thumbs{gap:6px;padding:3px 2px}
+ #at-gallery-viewer .at-gallery-project-thumbs button{width:58px;min-width:58px;height:39px}
+ #at-gallery-viewer .at-gallery-viewer-bottom>p:last-child{font-size:8px}
+}
 </style></head><body class="flex flex-col min-h-screen antialiased" data-page="gallery"><div class="bg-brand-charcoal text-white text-xs py-2 px-4 border-b border-brand-slate/40 text-center sm:text-left">
 <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
 <div class="flex items-center space-x-2">
@@ -437,6 +459,9 @@
  const gallery=document.getElementById("at-gallery-redesign");
  const viewer=document.getElementById("at-gallery-viewer");
  if(!gallery||!viewer)return;
+ // Move the dialog out of .page-visible, whose transform creates a fixed-position containing block.
+ // The modal remains fixed to the viewport regardless of the gallery's scroll position.
+ document.body.appendChild(viewer);
  const items=Array.from(gallery.querySelectorAll(".at-gallery-tile"));
  const covers=items.map(item=>item.querySelector("img"));
  if(items.length!==7||covers.some(img=>!img))return;
@@ -480,22 +505,26 @@
    thumbnails.appendChild(button);
   });
  }
+ let openScrollY=0,previousOverflow="";
  function openProject(index){
   previousFocus=document.activeElement;
+  openScrollY=window.scrollY;
+  previousOverflow=document.body.style.overflow;
   project=index;photo=0;
   renderThumbnails();
   showPhoto(0);
   viewer.hidden=false;
   viewer.setAttribute("aria-hidden","false");
   document.body.style.overflow="hidden";
-  closeButton.focus();
+  closeButton.focus({preventScroll:true});
  }
  function close(){
   viewer.hidden=true;
   viewer.setAttribute("aria-hidden","true");
   big.removeAttribute("src");
-  document.body.style.overflow="";
-  if(previousFocus&&typeof previousFocus.focus==="function")previousFocus.focus();
+  document.body.style.overflow=previousOverflow;
+  window.scrollTo({top:openScrollY,left:0,behavior:"instant"});
+  if(previousFocus&&typeof previousFocus.focus==="function")previousFocus.focus({preventScroll:true});
  }
  items.forEach((item,i)=>item.addEventListener("click",()=>openProject(i)));
  closeButton.addEventListener("click",close);
