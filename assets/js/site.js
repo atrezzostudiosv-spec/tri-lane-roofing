@@ -310,7 +310,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
         }
 
 
-/* === ATREZZO ARCHITECTURAL ASSEMBLY — SELECTIVE MOTION v1 ===
+/* === ATREZZO ARCHITECTURAL ASSEMBLY — SELECTIVE MOTION v2 ===
  * Purposeful reveal only: Home intro/services/approach, Services exterior
  * cards, About values, Gallery image tiles. Contact remains static.
  */
@@ -323,6 +323,8 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const selected = [];
+    // Desktop/tablet gets a clear cascade; touchscreens stay responsive.
+    const smallScreen = window.matchMedia("(max-width: 767px)").matches;
     function add(selector, stagger, rowAware) {
       const items = Array.from(document.querySelectorAll(selector));
       if (!items.length) return;
@@ -335,23 +337,25 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             Math.abs(other.offsetTop - top) < 3
           ).length;
         }
-        item.style.setProperty("--at-assembly-delay", Math.min(inRow * stagger, 270) + "ms");
+        const effectiveStagger = smallScreen ? Math.min(stagger, 85) : stagger;
+        const maxDelay = smallScreen ? 170 : 560;
+        item.style.setProperty("--at-assembly-delay", Math.min(inRow * effectiveStagger, maxDelay) + "ms");
         item.classList.add("at-assembly-item");
         selected.push(item);
       });
     }
 
     if (page === "home") {
-      add('#page-home [class~="lg:col-span-7"], #page-home [class~="lg:col-span-5"]', 100, false);
+      add('#page-home [class~="lg:col-span-7"], #page-home [class~="lg:col-span-5"]', 160, false);
       add(".tl-wwd-feature", 0, false);
-      add(".tl-wwd-secondary > .tl-wwd-card", 90, true);
-      add(".tl-tablet-approach-grid > *", 90, true);
+      add(".tl-wwd-secondary > .tl-wwd-card", 160, true);
+      add(".tl-tablet-approach-grid > *", 160, true);
     } else if (page === "services") {
-      add("#sv-exterior-cards > .sv-card", 90, true);
+      add("#sv-exterior-cards > .sv-card", 160, true);
     } else if (page === "about") {
-      add("#at-about-v1 .at-about-values-grid > .at-about-value", 90, true);
+      add("#at-about-v1 .at-about-values-grid > .at-about-value", 160, true);
     } else if (page === "gallery") {
-      add("#at-gallery-redesign .at-gallery-grid > .at-gallery-tile", 90, true);
+      add("#at-gallery-redesign .at-gallery-grid > .at-gallery-tile", 160, true);
     }
     if (!selected.length) return;
 
