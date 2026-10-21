@@ -308,4 +308,83 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
                 Call DFW Headquarters directly at <strong>(817) 717-3997</strong> for scheduling.
             `;
         }
-    
+
+
+/* === ATREZZO ARCHITECTURAL ASSEMBLY — SELECTIVE MOTION v1 ===
+ * Purposeful reveal only: Home intro/services/approach, Services exterior
+ * cards, About values, Gallery image tiles. Contact remains static.
+ */
+(function () {
+  "use strict";
+  function initArchitecturalAssembly() {
+    const page = document.body && document.body.dataset.page;
+    if (!["home", "services", "about", "gallery"].includes(page)) return;
+    if (!("IntersectionObserver" in window)) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const selected = [];
+    function add(selector, stagger, rowAware) {
+      const items = Array.from(document.querySelectorAll(selector));
+      if (!items.length) return;
+      items.forEach((item, index) => {
+        if (selected.includes(item)) return;
+        let inRow = index;
+        if (rowAware) {
+          const top = item.offsetTop;
+          inRow = items.slice(0, index).filter(other =>
+            Math.abs(other.offsetTop - top) < 3
+          ).length;
+        }
+        item.style.setProperty("--at-assembly-delay", Math.min(inRow * stagger, 270) + "ms");
+        item.classList.add("at-assembly-item");
+        selected.push(item);
+      });
+    }
+
+    if (page === "home") {
+      add('#page-home [class~="lg:col-span-7"], #page-home [class~="lg:col-span-5"]', 100, false);
+      add(".tl-wwd-feature", 0, false);
+      add(".tl-wwd-secondary > .tl-wwd-card", 90, true);
+      add(".tl-tablet-approach-grid > *", 90, true);
+    } else if (page === "services") {
+      add("#sv-exterior-cards > .sv-card", 90, true);
+    } else if (page === "about") {
+      add("#at-about-v1 .at-about-values-grid > .at-about-value", 90, true);
+    } else if (page === "gallery") {
+      add("#at-gallery-redesign .at-gallery-grid > .at-gallery-tile", 90, true);
+    }
+    if (!selected.length) return;
+
+    // Enable hidden entry states only once all observer targets are known.
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("at-assembly-visible");
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: "0px 0px -6% 0px", threshold: 0.08 });
+
+    selected.forEach(item => observer.observe(item));
+    document.body.classList.add("at-assembly-enabled");
+
+    // Browser restoring a scrolled page and breakpoint changes must never
+    // leave an already-passed block invisible.
+    window.addEventListener("pageshow", () => {
+      selected.forEach(item => {
+        const box = item.getBoundingClientRect();
+        if (box.bottom <= 0 || box.top >= window.innerHeight) {
+          if (box.bottom <= 0) {
+            item.classList.add("at-assembly-visible");
+            observer.unobserve(item);
+          }
+        }
+      });
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initArchitecturalAssembly, {once:true});
+  } else {
+    initArchitecturalAssembly();
+  }
+})();
