@@ -163,7 +163,52 @@
 @media(hover:none){#tl-sv-top .sv-card:hover{transform:none;box-shadow:0 10px 30px rgba(15,23,42,.06)}}
 @media(prefers-reduced-motion:reduce){#tl-sv-top .sv-card,#tl-sv-top .sv-card .sv-card-media img,#tl-sv-top .sv-card a{transition:none}#tl-sv-top .sv-card:hover,#tl-sv-top .sv-card:hover .sv-card-media img{transform:none}}
 </style>
-</head><body class="flex flex-col min-h-screen antialiased" data-page="services"><div class="bg-brand-charcoal text-white text-xs py-2 px-4 border-b border-brand-slate/40 text-center sm:text-left">
+<style id="tl-process-responsive-v2">
+/* Responsive five-step timeline: cards participate in normal document flow */
+.tl-process-section{background:#171B1E;color:#fff;padding:84px 0 94px;scroll-margin-top:95px}
+.tl-process-section *{box-sizing:border-box}
+.tl-process-container{max-width:1060px;margin:auto;padding:0 32px}
+.tl-process-header{text-align:center;max-width:760px;margin:0 auto 64px}
+.tl-process-label{color:#F58620;letter-spacing:.18em;font-size:12px;font-weight:800}
+.tl-process-header h2{font-family:"Barlow Condensed",Impact,sans-serif;font-size:clamp(42px,5vw,60px);font-weight:800;line-height:1;letter-spacing:.01em;text-transform:uppercase;margin:13px 0 17px}
+.tl-process-header p{max-width:680px;margin:auto;color:#b4bcc2;font-size:14px;line-height:1.85}
+.tl-process-timeline{position:relative}
+.tl-process-timeline::before{content:"";position:absolute;inset:30px auto 30px 50%;width:2px;transform:translateX(-50%);background:linear-gradient(to bottom,#6c7880,#43525d 85%,#6c7880);pointer-events:none}
+.tl-process-step{position:relative;min-width:0;display:grid;grid-template-columns:minmax(0,1fr) 76px minmax(0,1fr);align-items:center;min-height:100px;margin-bottom:27px}
+.tl-process-step:last-child{margin-bottom:0}
+.tl-process-circle{grid-column:2;grid-row:1;width:60px;height:60px;justify-self:center;display:grid;place-items:center;z-index:1;border:2px solid #77848d;background:#344047;color:#e9eef1;border-radius:50%;box-shadow:0 0 0 8px #171B1E;font-family:"Barlow Condensed",Impact,sans-serif;font-size:25px;font-weight:800;font-variant-numeric:tabular-nums;transition:background-color .35s,border-color .35s,color .35s,transform .35s,box-shadow .35s}
+.tl-process-card{min-width:0;grid-row:1;background:rgba(52,64,71,.43);border:1px solid #44525c;border-radius:14px;padding:26px 28px;text-align:left;transition:background-color .35s,border-color .35s,box-shadow .35s}
+.tl-process-left .tl-process-card{grid-column:1;margin-right:18px}
+.tl-process-right .tl-process-card{grid-column:3;margin-left:18px}
+.tl-process-card h3{font-family:"Barlow Condensed",Impact,sans-serif;font-size:clamp(24px,2.35vw,30px);font-weight:800;text-transform:uppercase;line-height:1.1;letter-spacing:.01em;color:#f4f5f5;margin:0 0 12px}
+.tl-process-card p{font-size:13px;line-height:1.76;color:#c9d1d6;margin:0;overflow-wrap:break-word}
+.tl-process-step.is-active .tl-process-circle{background:#F58620;border-color:#F58620;color:#171B1E;transform:scale(1.065);box-shadow:0 0 0 8px #171B1E,0 0 23px rgba(245,134,32,.27)}
+.tl-process-step.is-active .tl-process-card{background:rgba(63,75,81,.55);border-color:rgba(245,134,32,.68);box-shadow:0 11px 28px rgba(0,0,0,.11)}
+.tl-process-step.is-active .tl-process-card h3{color:#F58620}
+@media(max-width:1023px){
+ .tl-process-header{margin-bottom:44px}
+ .tl-process-timeline::before{left:30px;top:24px;bottom:24px;transform:none}
+ .tl-process-step{grid-template-columns:60px minmax(0,1fr);gap:17px;align-items:start;min-height:0;margin-bottom:22px}
+ .tl-process-circle{grid-column:1;grid-row:1;justify-self:center;width:56px;height:56px;font-size:23px}
+ .tl-process-left .tl-process-card,.tl-process-right .tl-process-card{grid-column:2;grid-row:1;margin:0}
+ .tl-process-card{padding:24px 26px}
+}
+@media(max-width:599px){
+ .tl-process-section{padding:62px 0 70px}
+ .tl-process-container{padding:0 18px}
+ .tl-process-header{margin-bottom:37px}
+ .tl-process-header h2{font-size:clamp(37px,9.8vw,48px)}
+ .tl-process-header p{font-size:13px}
+ .tl-process-timeline::before{left:24px}
+ .tl-process-step{grid-template-columns:48px minmax(0,1fr);gap:12px;margin-bottom:17px}
+ .tl-process-circle{width:47px;height:47px;font-size:20px;box-shadow:0 0 0 5px #171B1E}
+ .tl-process-step.is-active .tl-process-circle{box-shadow:0 0 0 5px #171B1E,0 0 19px rgba(245,134,32,.22)}
+ .tl-process-card{padding:21px 18px;border-radius:11px}
+ .tl-process-card h3{font-size:clamp(22px,6vw,27px)}
+ .tl-process-card p{font-size:12.5px;line-height:1.7}
+}
+@media(prefers-reduced-motion:reduce){.tl-process-circle,.tl-process-card{transition:none}.tl-process-step.is-active .tl-process-circle{transform:none}}
+</style></head><body class="flex flex-col min-h-screen antialiased" data-page="services"><div class="bg-brand-charcoal text-white text-xs py-2 px-4 border-b border-brand-slate/40 text-center sm:text-left">
 <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
 <div class="flex items-center space-x-2">
 <span class="inline-block w-2 h-2 rounded-full bg-brand-orange animate-pulse"></span>
@@ -291,79 +336,37 @@
  </section>
 </div>
 <!-- Section 07: Complete 5-Step Roofing Process Timeline -->
-<div class="py-20 bg-brand-charcoal text-white" id="our-process">
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="text-center mb-16">
-<span class="text-brand-orange font-bold text-sm tracking-widest uppercase block mb-2">HOW WE WORK</span>
-<h2 class="text-4xl sm:text-5xl font-bold mb-4">A CLEAR PROCESS, FROM START TO FINISH.</h2>
-<p class="text-stone-400 max-w-2xl mx-auto">
-                            Tri-Lane's published roofing process outlines five distinct stages, including coordination with the customer and, when applicable, their insurance company.
-                        </p>
-</div>
-<div class="space-y-8 relative before:absolute before:inset-0 before:left-8 md:before:left-1/2 before:-ml-0.5 before:w-0.5 before:bg-brand-slate">
-<!-- Step 1 -->
-<div class="relative flex flex-col md:flex-row items-start group">
-<div class="flex items-center justify-center w-16 h-16 rounded-full bg-brand-orange text-white font-display text-2xl font-bold shrink-0 z-10 mb-4 md:mb-0 md:mx-auto">
-                                01
-                            </div>
-<div class="bg-brand-slate/40 p-6 rounded-lg border border-brand-slate md:w-[calc(50%-3rem)] md:absolute md:left-0 text-left">
-<h3 class="text-2xl font-bold mb-2 text-brand-orange">Initial Contact</h3>
-<p class="text-stone-300 text-sm leading-relaxed">
-                                    Contact the team to discuss your roofing needs. Tri-Lane gathers the initial information, answers questions, and arranges an on-site inspection.
-                                </p>
-</div>
-</div>
-<!-- Step 2 -->
-<div class="relative flex flex-col md:flex-row items-start group">
-<div class="flex items-center justify-center w-16 h-16 rounded-full bg-brand-slate text-brand-orange font-display text-2xl font-bold shrink-0 z-10 mb-4 md:mb-0 md:mx-auto border-2 border-brand-orange">
-                                02
-                            </div>
-<div class="bg-brand-slate/40 p-6 rounded-lg border border-brand-slate md:w-[calc(50%-3rem)] md:absolute md:right-0 text-left">
-<h3 class="text-2xl font-bold mb-2 text-brand-orange">Home Visit &amp; Full Site Inspection</h3>
-<p class="text-stone-300 text-sm leading-relaxed">
-                                    A roofing specialist visits the property to inspect the roof and document storm-related damage through detailed photographs and structural notes. When an insurance claim is involved, the team can assist with filing and coordinate directly with the insurance adjuster.
-                                </p>
-</div>
-</div>
-<!-- Step 3 -->
-<div class="relative flex flex-col md:flex-row items-start group">
-<div class="flex items-center justify-center w-16 h-16 rounded-full bg-brand-slate text-brand-orange font-display text-2xl font-bold shrink-0 z-10 mb-4 md:mb-0 md:mx-auto border-2 border-brand-orange">
-                                03
-                            </div>
-<div class="bg-brand-slate/40 p-6 rounded-lg border border-brand-slate md:w-[calc(50%-3rem)] md:absolute md:left-0 text-left">
-<h3 class="text-2xl font-bold mb-2 text-brand-orange">Project Review &amp; Contract</h3>
-<p class="text-stone-300 text-sm leading-relaxed">
-                                    After the applicable insurance claim has been processed, Tri-Lane reviews the scope of work, timeline, and costs with the customer. The team also discusses available material upgrades, possible out-of-pocket costs, and insurance estimates before providing a formal contract.
-                                </p>
-</div>
-</div>
-<!-- Step 4 -->
-<div class="relative flex flex-col md:flex-row items-start group">
-<div class="flex items-center justify-center w-16 h-16 rounded-full bg-brand-slate text-brand-orange font-display text-2xl font-bold shrink-0 z-10 mb-4 md:mb-0 md:mx-auto border-2 border-brand-orange">
-                                04
-                            </div>
-<div class="bg-brand-slate/40 p-6 rounded-lg border border-brand-slate md:w-[calc(50%-3rem)] md:absolute md:right-0 text-left">
-<h3 class="text-2xl font-bold mb-2 text-brand-orange">Scheduling &amp; Installation</h3>
-<p class="text-stone-300 text-sm leading-relaxed">
-                                    Following the signed contract and deposit, Tri-Lane coordinates material delivery and installation scheduling. The roofing crew performs the installation with project managers present to oversee safety and quality standards.
-                                </p>
-</div>
-</div>
-<!-- Step 5 -->
-<div class="relative flex flex-col md:flex-row items-start group">
-<div class="flex items-center justify-center w-16 h-16 rounded-full bg-brand-orange text-white font-display text-2xl font-bold shrink-0 z-10 mb-4 md:mb-0 md:mx-auto">
-                                05
-                            </div>
-<div class="bg-brand-slate/40 p-6 rounded-lg border border-brand-slate md:w-[calc(50%-3rem)] md:absolute md:left-0 text-left">
-<h3 class="text-2xl font-bold mb-2 text-brand-orange">Final Inspection &amp; Walkthrough</h3>
-<p class="text-stone-300 text-sm leading-relaxed">
-                                    After the work is completed, the roof and worksite undergo a full quality review. A Tri-Lane representative then walks through the finished project with the customer to address all expectations.
-                                </p>
-</div>
-</div>
-</div>
-</div>
-</div>
+<section class="tl-process-section" id="our-process" aria-labelledby="tl-process-heading">
+ <div class="tl-process-container">
+  <header class="tl-process-header">
+   <span class="tl-process-label">HOW WE WORK</span>
+   <h2 id="tl-process-heading">A CLEAR PROCESS, FROM START TO FINISH.</h2>
+   <p>Tri-Lane's published roofing process outlines five distinct stages, including coordination with the customer and, when applicable, their insurance company.</p>
+  </header>
+  <div class="tl-process-timeline" aria-label="Five-step roofing process">
+   <article class="tl-process-step tl-process-left is-active" data-step="1" aria-current="step">
+  <span class="tl-process-circle" aria-label="Step 1">01</span>
+  <div class="tl-process-card"><h3>Initial Contact</h3><p>Contact the team to discuss your roofing needs. Tri-Lane gathers the initial information, answers questions, and arranges an on-site inspection.</p></div>
+ </article>
+   <article class="tl-process-step tl-process-right" data-step="2">
+  <span class="tl-process-circle" aria-label="Step 2">02</span>
+  <div class="tl-process-card"><h3>Home Visit &amp; Full Site Inspection</h3><p>A roofing specialist visits the property to inspect the roof and document storm-related damage through detailed photographs and structural notes. When an insurance claim is involved, the team can assist with filing and coordinate directly with the insurance adjuster.</p></div>
+ </article>
+   <article class="tl-process-step tl-process-left" data-step="3">
+  <span class="tl-process-circle" aria-label="Step 3">03</span>
+  <div class="tl-process-card"><h3>Project Review &amp; Contract</h3><p>After the applicable insurance claim has been processed, Tri-Lane reviews the scope of work, timeline, and costs with the customer. The team also discusses available material upgrades, possible out-of-pocket costs, and insurance estimates before providing a formal contract.</p></div>
+ </article>
+   <article class="tl-process-step tl-process-right" data-step="4">
+  <span class="tl-process-circle" aria-label="Step 4">04</span>
+  <div class="tl-process-card"><h3>Scheduling &amp; Installation</h3><p>Following the signed contract and deposit, Tri-Lane coordinates material delivery and installation scheduling. The roofing crew performs the installation with project managers present to oversee safety and quality standards.</p></div>
+ </article>
+   <article class="tl-process-step tl-process-left" data-step="5">
+  <span class="tl-process-circle" aria-label="Step 5">05</span>
+  <div class="tl-process-card"><h3>Final Inspection &amp; Walkthrough</h3><p>After the work is completed, the roof and worksite undergo a full quality review. A Tri-Lane representative then walks through the finished project with the customer to address all expectations.</p></div>
+ </article>
+  </div>
+ </div>
+</section>
 <!-- Service Testimonial -->
 <div class="py-16 bg-white text-brand-charcoal text-center">
 <div class="max-w-4xl mx-auto px-4">
@@ -561,5 +564,37 @@
  function go(delta){const n=Math.max(0,Math.min(cards.length-1,index()+delta));track.scrollTo({left:cards[n].offsetLeft-cards[0].offsetLeft,behavior:reduced.matches?'instant':'smooth'});}
  prev?.addEventListener('click',()=>go(-1));next?.addEventListener('click',()=>go(1));
  track.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);update();
+})();
+</script><script id="tl-process-scroll-active-v2">
+(function(){
+ const section=document.getElementById('our-process');
+ if(!section)return;
+ const steps=Array.from(section.querySelectorAll('.tl-process-step'));
+ let active=0,waiting=false;
+ function refresh(){
+  waiting=false;
+  const area=section.getBoundingClientRect(),win=window.innerHeight;
+  if(area.bottom<0||area.top>win)return;
+  const target=win*.43;
+  let near=0,distance=Infinity;
+  for(let i=0;i<steps.length;i++){
+   const box=steps[i].getBoundingClientRect();
+   const d=Math.abs(box.top+box.height/2-target);
+   if(d<distance){distance=d;near=i}
+  }
+  if(near===active)return;
+  active=near;
+  steps.forEach((step,i)=>{
+   const selected=i===active;
+   step.classList.toggle('is-active',selected);
+   if(selected)step.setAttribute('aria-current','step');
+   else step.removeAttribute('aria-current');
+  });
+ }
+ function queue(){if(!waiting){waiting=true;requestAnimationFrame(refresh)}}
+ window.addEventListener('scroll',queue,{passive:true});
+ window.addEventListener('resize',queue);
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',queue);
+ else queue();
 })();
 </script></body></html>
