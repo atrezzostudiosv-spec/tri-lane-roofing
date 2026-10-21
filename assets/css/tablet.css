@@ -1,0 +1,265 @@
+/*
+ * ATREZZO / TRI-LANE — Tablet-only responsive refinement, 2026-10-21.
+ * Scope: 768–1199px. Desktop >=1200px and mobile <=767px retain approved layouts.
+ * This file is loaded AFTER custom.css on every page.
+ */
+@media (min-width: 768px) and (max-width: 1199px) {
+  /* GLOBAL HEADER — switch to the existing functional hamburger menu. */
+  body > header nav[aria-label="Main Navigation"] { display: none !important; }
+  body > header .flex.md\\:hidden { display: flex !important; align-items: center; }
+  body > header #mobile-menu.hidden { display: none !important; }
+  body > header #mobile-menu:not(.hidden) {
+    display: block !important;
+    max-height: calc(100dvh - 80px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  body > header .flex.items-center.justify-between.h-20 {
+    gap: clamp(14px, 2.5vw, 28px);
+  }
+  body > header .tl-header-logo { width: 146px; max-height: 65px; }
+  body > header button[onclick="openInquiryModal()"] {
+    white-space: nowrap;
+    font-size: 16px;
+    line-height: 1.15;
+    padding: 12px 18px;
+    min-height: 45px;
+  }
+  body > header #mobile-menu-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 46px;
+    min-height: 46px;
+  }
+
+  /* GLOBAL FOOTER — avoid narrow 12-column content on tablet landscape. */
+  footer .tl-tablet-footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 34px 40px;
+  }
+  footer .tl-tablet-footer-grid > * {
+    grid-column: auto !important;
+    min-width: 0;
+  }
+  footer .tl-tablet-footer-grid > :first-child { grid-column: 1 / -1 !important; }
+  footer .tl-tablet-footer-grid > :first-child p { max-width: 570px; }
+
+  /* HOME: preserve existing Bento, but give it tablet-friendly widths. */
+  body[data-page="home"] .tl-wwd-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  body[data-page="home"] .tl-wwd-feature {
+    min-height: 390px;
+  }
+  body[data-page="home"] .tl-wwd-secondary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+    gap: 16px;
+  }
+  body[data-page="home"] .tl-wwd-secondary .tl-wwd-card {
+    min-height: 215px;
+  }
+  body[data-page="home"] .tl-wwd-card h3 {
+    font-size: clamp(26px, 3.1vw, 36px);
+  }
+  body[data-page="home"] .tl-wwd-feature h3 {
+    font-size: clamp(43px, 5.4vw, 60px);
+  }
+
+  /* HOME: five approach items and 3 process previews, NOT 5 cramped columns. */
+  body[data-page="home"] .tl-tablet-approach-grid,
+  body[data-page="home"] .tl-tablet-process-preview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 20px;
+  }
+  body[data-page="home"] .tl-tablet-approach-grid > *,
+  body[data-page="home"] .tl-tablet-process-preview-grid > * {
+    min-width: 0;
+    height: auto;
+  }
+  body[data-page="home"] .tl-tablet-approach-grid > :last-child,
+  body[data-page="home"] .tl-tablet-process-preview-grid > :last-child {
+    grid-column: 1 / -1;
+  }
+  body[data-page="home"] .tl-tablet-approach-grid > :last-child p,
+  body[data-page="home"] .tl-tablet-process-preview-grid > :last-child p {
+    max-width: 70ch;
+  }
+  body[data-page="home"] .tl-tablet-approach-grid > *,
+  body[data-page="home"] .tl-tablet-process-preview-grid > * {
+    padding: clamp(22px, 3vw, 30px);
+  }
+  body[data-page="home"] .tl-featured-grid {
+    grid-template-rows: 200px 200px;
+    gap: 15px;
+  }
+
+  /* SERVICES: comfortable 2x2 grid instead of four thin, overlong cards. */
+  body[data-page="services"] #tl-sv-top .sv-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+  }
+  body[data-page="services"] #tl-sv-top .sv-card {
+    min-width: 0;
+    width: auto;
+    height: auto;
+  }
+  body[data-page="services"] #tl-sv-top .sv-card .sv-card-media img {
+    width: 100%;
+    height: clamp(190px, 22vw, 255px);
+    object-fit: cover;
+  }
+  body[data-page="services"] #tl-sv-top .sv-card .sv-card-body {
+    padding: 24px 24px 26px;
+  }
+  body[data-page="services"] #tl-sv-top .sv-card h3 {
+    font-size: clamp(29px, 3.2vw, 38px);
+    line-height: 1.04;
+  }
+  body[data-page="services"] #tl-sv-top .sv-card p {
+    font-size: 14px;
+    min-height: 0;
+    line-height: 1.7;
+  }
+  body[data-page="services"] #tl-sv-top .sv-exteriors-footer {
+    align-items: flex-start;
+    gap: 14px;
+  }
+  body[data-page="services"] .tl-process-card {
+    max-width: 770px;
+  }
+
+  /* ABOUT: give the values real reading width, keep three difference steps. */
+  body[data-page="about"] #at-about-v1 .at-about-values-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 28px;
+  }
+  body[data-page="about"] #at-about-v1 .at-about-value,
+  body[data-page="about"] #at-about-v1 .at-about-value + .at-about-value {
+    min-height: 0;
+    padding: 26px 12px 12px 0;
+    border-left: 0;
+  }
+  body[data-page="about"] #at-about-v1 .at-about-value:last-child {
+    grid-column: 1 / -1;
+    padding-top: 27px;
+  }
+  body[data-page="about"] #at-about-v1 .at-about-value:last-child p { max-width: 68ch; }
+  body[data-page="about"] #at-about-v1 .at-about-value h3 { font-size: 37px; }
+  body[data-page="about"] #at-about-v1 .at-about-value p {
+    font-size: 14px;
+    line-height: 1.8;
+    max-width: 48ch;
+  }
+  body[data-page="about"] #at-about-v1 .at-about-diff-columns {
+    gap: 23px;
+  }
+  body[data-page="about"] #at-about-v1 .at-about-diff-item {
+    min-height: 0;
+    padding-bottom: 9px;
+  }
+  body[data-page="about"] #at-about-v1 .at-about-diff-item h4 {
+    font-size: clamp(24px, 2.6vw, 32px);
+    overflow-wrap: break-word;
+  }
+  body[data-page="about"] #at-about-v1 .at-about-diff-item p {
+    font-size: 13px;
+    line-height: 1.73;
+  }
+
+  /* GALLERY: keep approved asymmetric image grid, tune tablet captions. */
+  body[data-page="gallery"] #at-gallery-redesign .at-gallery-grid { gap: 17px; }
+  body[data-page="gallery"] #at-gallery-redesign .at-gallery-caption { padding: 20px; }
+  body[data-page="gallery"] #at-gallery-redesign .at-gallery-caption strong {
+    font-size: clamp(28px, 3.25vw, 40px);
+    line-height: 1.03;
+  }
+  body[data-page="gallery"] #at-gallery-redesign .at-gallery-tile {
+    min-width: 0;
+  }
+
+  /* CONTACT: keep form fields together, don't crush into 7/5 columns. */
+  body[data-page="contact"] .tl-tablet-contact-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 36px;
+    max-width: 920px;
+    margin: 0 auto;
+  }
+  body[data-page="contact"] .tl-tablet-contact-layout > * {
+    grid-column: auto !important;
+    min-width: 0;
+  }
+  body[data-page="contact"] .tl-tablet-contact-form {
+    padding: clamp(26px, 3.7vw, 42px);
+  }
+  body[data-page="contact"] .tl-tablet-contact-info {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+}
+
+/* Narrow tablet: further improve hero + photo/text balance. */
+@media (min-width: 768px) and (max-width: 959px) {
+  body[data-page="services"] #tl-sv-top .sv-roof-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  body[data-page="services"] #tl-sv-top .sv-photo-wrap {
+    height: 385px;
+  }
+  body[data-page="services"] #tl-sv-top .sv-roof-copy { max-width: 750px; }
+  body[data-page="about"] #at-about-v1 .at-about-company-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  body[data-page="about"] #at-about-v1 .at-about-company-photo {
+    aspect-ratio: 1.65 / 1;
+    max-height: 460px;
+  }
+  body[data-page="about"] #at-about-v1 .at-about-company-copy h2 {
+    max-width: 800px;
+  }
+}
+
+/* Large tablet: the five-step process stays in readable vertical mode. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  body[data-page="services"] .tl-process-timeline::before {
+    left: 30px;
+    top: 24px;
+    bottom: 24px;
+    transform: none;
+  }
+  body[data-page="services"] .tl-process-step {
+    grid-template-columns: 60px minmax(0, 1fr);
+    gap: 17px;
+    align-items: start;
+    min-height: 0;
+    margin-bottom: 22px;
+  }
+  body[data-page="services"] .tl-process-circle {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: center;
+    width: 56px;
+    height: 56px;
+    font-size: 23px;
+  }
+  body[data-page="services"] .tl-process-left .tl-process-card,
+  body[data-page="services"] .tl-process-right .tl-process-card {
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0;
+  }
+  body[data-page="services"] .tl-process-card { padding: 24px 26px; }
+}
+
+@media (min-width: 768px) and (max-width: 849px) {
+  /* Header CTA must stay single-line even on 768px portrait tablets. */
+  body > header .tl-header-logo { width: 132px; }
+  body > header button[onclick="openInquiryModal()"] { padding-inline: 14px; font-size: 15px; }
+  body[data-page="gallery"] #at-gallery-redesign .at-gallery-grid { gap: 14px; }
+}
