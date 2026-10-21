@@ -148,6 +148,43 @@
  #at-about-v1 .at-about-company-photo:hover img{transform:none}
  #at-about-v1 .at-about-cta:hover{transform:none}
 }
+</style><style id="at-about-diff-active-style">
+/* Three-column editorial difference section, independently styled from the original About list. */
+#at-about-v1 .at-about-difference-v2{border-top:1px solid #d6d4cd;margin-top:72px;padding-top:48px;position:relative}
+#at-about-v1 .at-about-difference-v2-heading{margin-bottom:42px}
+#at-about-v1 .at-about-difference-v2-heading .at-about-label{margin:0 0 15px}
+#at-about-v1 .at-about-difference-v2-heading h3{font-family:"Barlow Condensed",Impact,sans-serif;font-size:clamp(43px,4.7vw,64px);letter-spacing:.01em;line-height:1;text-transform:uppercase;font-weight:800;margin:0;color:#171B1E}
+#at-about-v1 .at-about-diff-heading-line{display:block;width:54px;height:3px;background:#F58620;margin-top:19px}
+#at-about-v1 .at-about-diff-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,2.7vw,40px);padding:0;margin:0;list-style:none}
+#at-about-v1 .at-about-diff-item{position:relative;min-width:0;min-height:193px;padding:23px 0 6px}
+#at-about-v1 .at-about-diff-progress-line{position:absolute;top:0;left:0;width:100%;height:3px;background:#c7c8c7;transition:background-color .35s ease}
+#at-about-v1 .at-about-diff-index{display:block;color:#747c81;font-family:"Barlow Condensed",Impact,sans-serif;font-size:35px;font-weight:800;line-height:1;letter-spacing:.015em;font-variant-numeric:tabular-nums;transition:color .35s ease}
+#at-about-v1 .at-about-diff-item h4{font-family:"Barlow Condensed",Impact,sans-serif;color:#171B1E;font-size:clamp(25px,2.5vw,34px);text-transform:uppercase;font-weight:800;line-height:1.06;margin:17px 0 12px;letter-spacing:.01em}
+#at-about-v1 .at-about-diff-item p{color:#4a555e;font-size:14px;line-height:1.78;max-width:37ch;margin:0}
+#at-about-v1 .at-about-diff-item.is-active .at-about-diff-progress-line{background:#F58620}
+#at-about-v1 .at-about-diff-item.is-active .at-about-diff-index{color:#E57611}
+#at-about-v1 .at-about-diff-item.is-active h4{color:#21282c}
+@media(max-width:1023px){
+ #at-about-v1 .at-about-difference-v2{margin-top:55px;padding-top:34px}
+ #at-about-v1 .at-about-difference-v2-heading{margin-bottom:32px}
+ #at-about-v1 .at-about-diff-columns{gap:18px}
+ #at-about-v1 .at-about-diff-item{min-height:210px}
+ #at-about-v1 .at-about-diff-item h4{font-size:27px}
+ #at-about-v1 .at-about-diff-item p{font-size:13px}
+}
+@media(max-width:767px){
+ #at-about-v1 .at-about-difference-v2{margin-top:45px;padding-top:30px}
+ #at-about-v1 .at-about-difference-v2-heading h3{font-size:clamp(39px,9.8vw,54px)}
+ #at-about-v1 .at-about-difference-v2-heading{margin-bottom:21px}
+ #at-about-v1 .at-about-diff-columns{display:flex;flex-direction:column;gap:16px}
+ #at-about-v1 .at-about-diff-item{min-height:0;padding:20px 0 21px}
+ #at-about-v1 .at-about-diff-item h4{font-size:30px;margin:12px 0 9px}
+ #at-about-v1 .at-about-diff-item p{font-size:14px;max-width:unset}
+ #at-about-v1 .at-about-diff-index{font-size:32px}
+}
+@media(prefers-reduced-motion:reduce){
+ #at-about-v1 .at-about-diff-index,#at-about-v1 .at-about-diff-progress-line{transition:none}
+}
 </style></head><body class="flex flex-col min-h-screen antialiased" data-page="about"><div class="bg-brand-charcoal text-white text-xs py-2 px-4 border-b border-brand-slate/40 text-center sm:text-left">
 <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
 <div class="flex items-center space-x-2">
@@ -243,17 +280,33 @@
      <figcaption>ILLUSTRATIVE RESIDENTIAL PHOTOGRAPHY</figcaption>
     </figure>
    </div>
-   <div class="at-about-difference">
-    <div class="at-about-diff-heading">
-     <span class="at-about-label">THE TRI-LANE DIFFERENCE</span>
-     <span class="at-about-diff-rule" aria-hidden="true"></span>
+   <section class="at-about-difference-v2" aria-labelledby="at-about-difference-title">
+    <div class="at-about-difference-v2-heading">
+      <span class="at-about-label">OUR APPROACH</span>
+      <h3 id="at-about-difference-title">THE TRI-LANE DIFFERENCE</h3>
+      <span class="at-about-diff-heading-line" aria-hidden="true"></span>
     </div>
-    <ol class="at-about-diff-list">
-     <li><span class="at-about-num">01</span><p>Specialized focus on residential shingle, metal, and slate roofing systems.</p></li>
-     <li><span class="at-about-num">02</span><p>Complete storm damage site documentation and insurance adjuster liaison.</p></li>
-     <li><span class="at-about-num">03</span><p>Full walkthrough customer review before final sign-off.</p></li>
+    <ol class="at-about-diff-columns">
+      <li class="at-about-diff-item is-active" aria-current="step" data-diff-step="1">
+        <span class="at-about-diff-progress-line" aria-hidden="true"></span>
+        <span class="at-about-diff-index">01</span>
+        <h4>Roofing Systems</h4>
+        <p>Specialized focus on residential shingle, metal, and slate roofing systems.</p>
+      </li>
+      <li class="at-about-diff-item" data-diff-step="2">
+        <span class="at-about-diff-progress-line" aria-hidden="true"></span>
+        <span class="at-about-diff-index">02</span>
+        <h4>Storm Damage</h4>
+        <p>Complete storm damage site documentation and insurance adjuster liaison.</p>
+      </li>
+      <li class="at-about-diff-item" data-diff-step="3">
+        <span class="at-about-diff-progress-line" aria-hidden="true"></span>
+        <span class="at-about-diff-index">03</span>
+        <h4>Final Walkthrough</h4>
+        <p>Full walkthrough customer review before final sign-off.</p>
+      </li>
     </ol>
-   </div>
+  </section>
   </div>
  </section>
  <section class="at-about-values" aria-labelledby="at-about-values-h2">
@@ -470,4 +523,48 @@
 </div>
 </form>
 </div>
-</div><script src="assets/js/site.js"></script></body></html>
+</div><script src="assets/js/site.js"></script><script id="at-about-diff-scroll-activation">
+(function(){
+ "use strict";
+ const section=document.querySelector("#at-about-v1 .at-about-difference-v2");
+ if(!section)return;
+ const stages=Array.from(section.querySelectorAll(".at-about-diff-item"));
+ if(stages.length!==3)return;
+ let active=0,queued=false;
+ function refresh(){
+  queued=false;
+  const outer=section.getBoundingClientRect(),vh=window.innerHeight;
+  if(outer.bottom<0||outer.top>vh)return;
+  let next=0;
+  if(window.innerWidth<=767){
+    // On mobile, the active stage is the one closest to the reading position.
+    const readingLine=vh*.43;
+    let best=Infinity;
+    stages.forEach((item,i)=>{
+      const r=item.getBoundingClientRect();
+      const dist=Math.abs(r.top+r.height*.5-readingLine);
+      if(dist<best){best=dist;next=i}
+    });
+  }else{
+    // On tablet/desktop all three columns are visible at once.
+    // Activate sequentially as the section crosses the viewport's reading band.
+    const travel=Math.max(1,outer.height+vh*.24);
+    const progress=Math.max(0,Math.min(.999,(vh*.70-outer.top)/travel));
+    next=Math.min(2,Math.floor(progress*3));
+  }
+  if(next===active)return;
+  active=next;
+  stages.forEach((item,i)=>{
+    const on=i===active;
+    item.classList.toggle("is-active",on);
+    if(on)item.setAttribute("aria-current","step");
+    else item.removeAttribute("aria-current");
+  });
+ }
+ function queue(){if(!queued){queued=true;requestAnimationFrame(refresh)}}
+ window.addEventListener("scroll",queue,{passive:true});
+ window.addEventListener("resize",queue);
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",queue);
+ else queue();
+})();
+</script></body></html>
