@@ -530,41 +530,51 @@
  if(!section)return;
  const stages=Array.from(section.querySelectorAll(".at-about-diff-item"));
  if(stages.length!==3)return;
- let active=0,queued=false;
- function refresh(){
-  queued=false;
-  const outer=section.getBoundingClientRect(),vh=window.innerHeight;
-  if(outer.bottom<0||outer.top>vh)return;
-  let next=0;
-  if(window.innerWidth<=767){
-    // On mobile, the active stage is the one closest to the reading position.
-    const readingLine=vh*.43;
-    let best=Infinity;
-    stages.forEach((item,i)=>{
-      const r=item.getBoundingClientRect();
-      const dist=Math.abs(r.top+r.height*.5-readingLine);
-      if(dist<best){best=dist;next=i}
-    });
-  }else{
-    // On tablet/desktop all three columns are visible at once.
-    // Activate sequentially as the section crosses the viewport's reading band.
-    const travel=Math.max(1,outer.height+vh*.24);
-    const progress=Math.max(0,Math.min(.999,(vh*.70-outer.top)/travel));
-    next=Math.min(2,Math.floor(progress*3));
-  }
-  if(next===active)return;
-  active=next;
+ let active=-1;
+ let pending=false;
+ function activate(index){
+  if(index===active)return;
+  active=index;
   stages.forEach((item,i)=>{
-    const on=i===active;
-    item.classList.toggle("is-active",on);
-    if(on)item.setAttribute("aria-current","step");
+    const selected=i===index;
+    item.classList.toggle("is-active",selected);
+    if(selected)item.setAttribute("aria-current","step");
     else item.removeAttribute("aria-current");
   });
  }
- function queue(){if(!queued){queued=true;requestAnimationFrame(refresh)}}
- window.addEventListener("scroll",queue,{passive:true});
- window.addEventListener("resize",queue);
- if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",queue);
- else queue();
+ function update(){
+  pending=false;
+  const vh=window.innerHeight||document.documentElement.clientHeight;
+  const rect=section.getBoundingClientRect();
+  if(rect.bottom<=0||rect.top>=vh)return;
+  let next=0;
+  if(window.matchMedia("(max-width: 767px)").matches){
+    // Vertical layout: highlight the item closest to the reading line.
+    const readingLine=vh*.48;
+    let best=Infinity;
+    stages.forEach((stage,i)=>{
+      const b=stage.getBoundingClientRect();
+      const distance=Math.abs(b.top+b.height*.5-readingLine);
+      if(distance<best){best=distance;next=i;}
+    });
+  }else{
+    // Three columns share the same vertical position: progress is based on
+    // how the section crosses the viewport (not on individual card positions).
+    const start=vh*.88,end=vh*.20;
+    const progress=Math.max(0,Math.min(1,(start-rect.top)/(start-end)));
+    next=progress>=.67?2:progress>=.34?1:0;
+  }
+  activate(next);
+ }
+ function schedule(){
+  if(pending)return;
+  pending=true;
+  requestAnimationFrame(update);
+ }
+ window.addEventListener("scroll",schedule,{passive:true});
+ window.addEventListener("resize",schedule);
+ window.addEventListener("pageshow",schedule);
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",schedule);
+ else schedule();
 })();
 </script></body></html>
