@@ -91,6 +91,31 @@
 @media(max-width:1023px){#at-gallery-redesign .at-gallery-hero{min-height:445px}#at-gallery-redesign .at-gallery-hero h1{font-size:clamp(66px,9vw,100px)}#at-gallery-redesign .at-gallery-showcase{padding:60px 0 72px}#at-gallery-redesign .at-gallery-grid{gap:17px}}
 @media(max-width:767px){#at-gallery-redesign .at-gallery-hero{min-height:455px}#at-gallery-redesign .at-gallery-hero-photo{object-position:65% 50%}#at-gallery-redesign .at-gallery-hero:after{background:linear-gradient(90deg,rgba(15,19,22,.93),rgba(15,19,22,.58))}#at-gallery-redesign .at-gallery-hero-inner,#at-gallery-redesign .at-gallery-shell,#at-gallery-redesign .at-gallery-contact-inner{width:calc(100% - 38px)}#at-gallery-redesign .at-gallery-hero-inner{padding:62px 0}#at-gallery-redesign .at-gallery-hero h1{font-size:clamp(59px,14vw,83px)}#at-gallery-redesign .at-gallery-hero p{font-size:14px}#at-gallery-redesign .at-gallery-showcase{padding:49px 0 61px}#at-gallery-redesign .at-gallery-section-heading{flex-direction:column;align-items:flex-start;gap:11px;margin-bottom:25px}#at-gallery-redesign .at-gallery-section-heading p{text-align:left}#at-gallery-redesign .at-gallery-grid{grid-template-columns:1fr;gap:18px}#at-gallery-redesign .at-gallery-tile,#at-gallery-redesign .at-gallery-tile.at-gallery-wide{grid-column:auto;aspect-ratio:1.38/1}#at-gallery-redesign .at-gallery-caption{padding:22px}#at-gallery-redesign .at-gallery-caption strong{font-size:35px}#at-gallery-redesign .at-gallery-contact{min-height:315px}#at-gallery-redesign .at-gallery-contact-inner{align-items:flex-start;flex-direction:column;gap:24px;padding:44px 0}#at-gallery-redesign .at-gallery-contact h2{font-size:clamp(49px,12vw,69px)}#at-gallery-viewer{padding:12px}#at-gallery-viewer .at-gallery-viewer-middle{gap:8px}#at-gallery-viewer .at-gallery-viewer-middle img{width:calc(100% - 88px)}#at-gallery-viewer button{width:38px;height:38px}}
 @media(prefers-reduced-motion:reduce){#at-gallery-redesign .at-gallery-tile,#at-gallery-redesign .at-gallery-tile img,#at-gallery-redesign .at-gallery-cta,#at-gallery-viewer button{transition:none!important}#at-gallery-redesign .at-gallery-tile:hover img{transform:none}#at-gallery-redesign .at-gallery-cta:hover{transform:none}}
+
+/* Per-project photo thumbnails within the existing image viewer, no gallery-layout changes */
+#at-gallery-viewer .at-gallery-viewer-bottom{width:min(100%,900px);max-width:900px;padding:4px 0 15px;display:flex;flex-direction:column;align-items:center;gap:7px}
+#at-gallery-viewer .at-gallery-viewer-bottom h3{margin:0}
+#at-gallery-viewer .at-gallery-viewer-bottom .at-gallery-viewer-progress{color:#F58620;font-size:11px;letter-spacing:.15em;font-weight:800}
+#at-gallery-viewer .at-gallery-project-thumbs{display:flex;justify-content:center;gap:10px;max-width:100%;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#53606a transparent;padding:6px 4px}
+#at-gallery-viewer .at-gallery-project-thumbs button{width:92px;height:60px;min-width:92px;border-radius:7px;overflow:hidden;background:#2b343a;display:block;padding:0;border:2px solid #62707b;opacity:.62;transition:opacity .22s ease,border-color .22s ease,transform .22s ease}
+#at-gallery-viewer .at-gallery-project-thumbs button:hover,#at-gallery-viewer .at-gallery-project-thumbs button.is-selected{opacity:1;border-color:#F58620}
+#at-gallery-viewer .at-gallery-project-thumbs button.is-selected{transform:translateY(-2px)}
+#at-gallery-viewer .at-gallery-project-thumbs img{height:100%;width:100%;display:block;object-fit:cover}
+#at-gallery-viewer .at-gallery-viewer-bottom>p:last-child{font-size:10px;letter-spacing:.075em;color:#a4b0b7;margin:3px 0 0;line-height:1.5}
+#at-gallery-viewer .at-gallery-viewer-middle{padding:12px 0 8px}
+#at-gallery-viewer .at-gallery-viewer-middle img{max-height:calc(100vh - 290px)}
+@media(max-width:600px){
+ #at-gallery-viewer .at-gallery-project-thumbs{gap:7px;padding:5px 2px}
+ #at-gallery-viewer .at-gallery-project-thumbs button{width:60px;min-width:60px;height:49px;border-radius:5px}
+ #at-gallery-viewer .at-gallery-viewer-middle img{max-height:calc(100dvh - 260px)}
+ #at-gallery-viewer .at-gallery-viewer-bottom{gap:7px;padding:0 0 8px}
+ #at-gallery-viewer .at-gallery-viewer-bottom h3{font-size:25px}
+ #at-gallery-viewer .at-gallery-viewer-bottom>p:last-child{font-size:9px;letter-spacing:.02em}
+}
+@media(prefers-reduced-motion:reduce){
+ #at-gallery-viewer .at-gallery-project-thumbs button{transition:none}
+ #at-gallery-viewer .at-gallery-project-thumbs button.is-selected{transform:none}
+}
 </style></head><body class="flex flex-col min-h-screen antialiased" data-page="gallery"><div class="bg-brand-charcoal text-white text-xs py-2 px-4 border-b border-brand-slate/40 text-center sm:text-left">
 <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
 <div class="flex items-center space-x-2">
@@ -225,7 +250,12 @@
 <div class="at-gallery-viewer" id="at-gallery-viewer" role="dialog" aria-modal="true" aria-label="Gallery image viewer" aria-hidden="true" hidden>
  <div class="at-gallery-viewer-top"><span class="at-gallery-viewer-counter" id="at-gallery-viewer-counter">01 / 07</span><button type="button" class="at-gallery-viewer-close" aria-label="Close image viewer"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
  <div class="at-gallery-viewer-middle"><button class="at-gallery-viewer-previous" type="button" aria-label="Previous image"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button><img id="at-gallery-viewer-img" alt="Illustrative residence design concept"/><button class="at-gallery-viewer-next" type="button" aria-label="Next image"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button></div>
- <div class="at-gallery-viewer-bottom"><h3 id="at-gallery-viewer-title">Project 01</h3><p>DESIGN CONCEPT · NOT A DOCUMENTED TRI-LANE PROJECT</p></div>
+ <div class="at-gallery-viewer-bottom">
+ <h3 id="at-gallery-viewer-title">Project 01</h3>
+ <p class="at-gallery-viewer-progress" id="at-gallery-viewer-progress" aria-live="polite">IMAGE 01 / 04</p>
+ <div class="at-gallery-project-thumbs" id="at-gallery-project-thumbs" role="group" aria-label="Photos in this project"></div>
+ <p>ILLUSTRATIVE GALLERY DEMO · IMAGES MAY REPEAT · NOT VERIFIED TRI-LANE WORK</p>
+</div>
 </div>
 </section></main><footer class="bg-brand-charcoal text-white border-t border-brand-slate">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -408,21 +438,88 @@
  const viewer=document.getElementById("at-gallery-viewer");
  if(!gallery||!viewer)return;
  const items=Array.from(gallery.querySelectorAll(".at-gallery-tile"));
+ const covers=items.map(item=>item.querySelector("img"));
+ if(items.length!==7||covers.some(img=>!img))return;
+ // Four illustrative photos for each demo project, reusing existing gallery illustrations.
+ const sets=covers.map((cover,i)=>[i,(i+1)%items.length,(i+3)%items.length,(i+5)%items.length].map(k=>covers[k]));
  const big=viewer.querySelector("#at-gallery-viewer-img");
- const caption=viewer.querySelector("#at-gallery-viewer-title");
+ const title=viewer.querySelector("#at-gallery-viewer-title");
  const counter=viewer.querySelector("#at-gallery-viewer-counter");
+ const progress=viewer.querySelector("#at-gallery-viewer-progress");
+ const thumbnails=viewer.querySelector("#at-gallery-project-thumbs");
  const closeButton=viewer.querySelector(".at-gallery-viewer-close");
- let active=0,previousFocus=null,touchStart=null;
- function show(index){active=(index+items.length)%items.length;const item=items[active];const pic=item.querySelector("img");big.src=pic.src;big.alt=pic.alt;caption.textContent=`Project ${String(active+1).padStart(2,"0")}`;counter.textContent=`${String(active+1).padStart(2,"0")} / ${String(items.length).padStart(2,"0")}`}
- function open(index){previousFocus=document.activeElement;show(index);viewer.hidden=false;viewer.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";closeButton.focus()}
- function close(){viewer.hidden=true;viewer.setAttribute("aria-hidden","true");big.removeAttribute("src");document.body.style.overflow="";previousFocus?.focus()}
- items.forEach((el,i)=>el.addEventListener("click",()=>open(i)));
+ let project=0,photo=0,previousFocus=null,touchStart=null;
+ function projectTitle(){return "Project "+String(project+1).padStart(2,"0")}
+ function showPhoto(n){
+  const set=sets[project];
+  photo=(n+set.length)%set.length;
+  const cover=set[photo];
+  big.src=cover.currentSrc||cover.src;
+  big.alt="Illustrative image "+(photo+1)+" of "+set.length+" for "+projectTitle()+". Not verified Tri-Lane work.";
+  title.textContent=projectTitle();
+  counter.textContent=projectTitle().toUpperCase()+"  ·  "+String(photo+1).padStart(2,"0")+" / "+String(set.length).padStart(2,"0");
+  progress.textContent="IMAGE "+String(photo+1).padStart(2,"0")+" OF "+String(set.length).padStart(2,"0");
+  [...thumbnails.children].forEach((button,i)=>{
+    const current=i===photo;
+    button.classList.toggle("is-selected",current);
+    button.setAttribute("aria-pressed",current?"true":"false");
+  });
+ }
+ function renderThumbnails(){
+  thumbnails.replaceChildren();
+  sets[project].forEach((source,i)=>{
+   const button=document.createElement("button");
+   button.type="button";
+   button.setAttribute("aria-label","View image "+(i+1)+" of "+sets[project].length+" in "+projectTitle());
+   const img=document.createElement("img");
+   img.src=source.currentSrc||source.src;
+   img.alt="";
+   img.loading="lazy";
+   button.appendChild(img);
+   button.addEventListener("click",()=>showPhoto(i));
+   thumbnails.appendChild(button);
+  });
+ }
+ function openProject(index){
+  previousFocus=document.activeElement;
+  project=index;photo=0;
+  renderThumbnails();
+  showPhoto(0);
+  viewer.hidden=false;
+  viewer.setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+  closeButton.focus();
+ }
+ function close(){
+  viewer.hidden=true;
+  viewer.setAttribute("aria-hidden","true");
+  big.removeAttribute("src");
+  document.body.style.overflow="";
+  if(previousFocus&&typeof previousFocus.focus==="function")previousFocus.focus();
+ }
+ items.forEach((item,i)=>item.addEventListener("click",()=>openProject(i)));
  closeButton.addEventListener("click",close);
- viewer.querySelector(".at-gallery-viewer-previous").addEventListener("click",()=>show(active-1));
- viewer.querySelector(".at-gallery-viewer-next").addEventListener("click",()=>show(active+1));
+ viewer.querySelector(".at-gallery-viewer-previous").addEventListener("click",()=>showPhoto(photo-1));
+ viewer.querySelector(".at-gallery-viewer-next").addEventListener("click",()=>showPhoto(photo+1));
  viewer.addEventListener("click",e=>{if(e.target===viewer)close()});
  viewer.addEventListener("touchstart",e=>{touchStart=e.touches[0]?.clientX??null},{passive:true});
- viewer.addEventListener("touchend",e=>{if(touchStart===null)return;const dist=(e.changedTouches[0]?.clientX??touchStart)-touchStart;if(Math.abs(dist)>55)show(active+(dist<0?1:-1));touchStart=null},{passive:true});
- document.addEventListener("keydown",e=>{if(viewer.hidden)return;if(e.key==="Escape"){close();e.preventDefault()}else if(e.key==="ArrowRight"){show(active+1);e.preventDefault()}else if(e.key==="ArrowLeft"){show(active-1);e.preventDefault()}else if(e.key==="Tab"){const controls=[closeButton,viewer.querySelector(".at-gallery-viewer-previous"),viewer.querySelector(".at-gallery-viewer-next")];const pos=controls.indexOf(document.activeElement);const target=e.shiftKey?(pos<=0?controls.length-1:pos-1):(pos<0||pos===controls.length-1?0:pos+1);controls[target].focus();e.preventDefault()}});
+ viewer.addEventListener("touchend",e=>{
+  if(touchStart===null)return;
+  const distance=(e.changedTouches[0]?.clientX??touchStart)-touchStart;
+  if(Math.abs(distance)>55)showPhoto(photo+(distance<0?1:-1));
+  touchStart=null;
+ },{passive:true});
+ document.addEventListener("keydown",e=>{
+  if(viewer.hidden)return;
+  if(e.key==="Escape"){close();e.preventDefault()}
+  else if(e.key==="ArrowRight"){showPhoto(photo+1);e.preventDefault()}
+  else if(e.key==="ArrowLeft"){showPhoto(photo-1);e.preventDefault()}
+  else if(e.key==="Tab"){
+   const controls=[...viewer.querySelectorAll("button")];
+   const first=controls[0],last=controls[controls.length-1];
+   if(e.shiftKey&&document.activeElement===first){last.focus();e.preventDefault()}
+   else if(!e.shiftKey&&document.activeElement===last){first.focus();e.preventDefault()}
+  }
+ });
 })();
 </script></body></html>
