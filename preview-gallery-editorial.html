@@ -119,6 +119,7 @@
 
 /* Fix: gallery viewer is portalled to BODY so page-view transform does not trap fixed positioning. */
 #at-gallery-viewer{
+  box-sizing:border-box;
   position:fixed;inset:0;width:100%;height:100vh;height:100dvh;
   max-height:100dvh;overflow:hidden;z-index:120;display:flex;
   flex-direction:column;justify-content:space-between;
