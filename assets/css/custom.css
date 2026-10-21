@@ -79,4 +79,54 @@
       .tl-featured-disclaimer{color:#706f6b;font:500 11px/1.6 Manrope,sans-serif;margin-top:14px;text-align:right}
       @media (max-width:767px){.tl-featured-grid{grid-template-columns:1fr;grid-template-rows:330px 230px 230px;gap:14px}.tl-featured-tile-main{grid-row:auto}.tl-featured-overlay{padding:20px}.tl-featured-overlay strong{font-size:30px}.tl-featured-disclaimer{text-align:left}}
       @media (prefers-reduced-motion:reduce){.tl-featured-tile img{transition:none!important}}
-    
+
+
+/* === ATREZZO ARCHITECTURAL ASSEMBLY — SELECTIVE MOTION v1 ===
+ * One-time scroll-reveal. Existing 3-step About and 5-step Services
+ * scroll-active sequences are deliberately left unchanged.
+ * Content stays readable when JavaScript or IntersectionObserver is unavailable.
+ */
+@keyframes at-assembly-rise {
+  from { opacity: 0; translate: 0 16px; }
+  to   { opacity: 1; translate: 0 0; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  body.at-assembly-enabled .at-assembly-item:not(.at-assembly-visible) {
+    opacity: 0;
+    translate: 0 16px;
+  }
+  body.at-assembly-enabled .at-assembly-item.at-assembly-visible {
+    animation: at-assembly-rise 420ms cubic-bezier(.22,.7,.22,1) both;
+    animation-delay: var(--at-assembly-delay, 0ms);
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  /* Home: only the actual service cards respond, not informational value blocks. */
+  body[data-page="home"] .tl-wwd-card {
+    transition: border-color 300ms ease-out, transform 300ms ease-out;
+  }
+  body[data-page="home"] .tl-wwd-card:hover {
+    border-color: rgba(245,134,32,.50);
+    transform: scale(1.01);
+  }
+  /* Services: replace the existing -9px jump with controlled feedback. */
+  body[data-page="services"] #tl-sv-top .sv-cards .sv-card {
+    transition: transform 300ms ease-out, box-shadow 300ms ease-out, border-color 300ms ease-out;
+  }
+  body[data-page="services"] #tl-sv-top .sv-cards .sv-card:hover {
+    transform: translateY(-3px) scale(1.01);
+    border-color: rgba(245,134,32,.50);
+    box-shadow: 0 18px 42px rgba(15,23,42,.11);
+  }
+  body[data-page="services"] #tl-sv-top .sv-cards .sv-card:hover .sv-card-media img {
+    transform: scale(1.035);
+  }
+}
+@media print {
+  body .at-assembly-item {
+    opacity: 1 !important;
+    translate: none !important;
+    animation: none !important;
+  }
+}
+/* === END SELECTIVE MOTION v1 === */
