@@ -107,6 +107,9 @@
     width: auto;
     height: auto;
   }
+  body[data-page="services"] #tl-sv-top .sv-card-media {
+    height: clamp(190px, 22vw, 255px);
+  }
   body[data-page="services"] #tl-sv-top .sv-card .sv-card-media img {
     width: 100%;
     height: clamp(190px, 22vw, 255px);
