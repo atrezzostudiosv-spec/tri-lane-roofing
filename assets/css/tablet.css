@@ -6,7 +6,7 @@
 @media (min-width: 768px) and (max-width: 1199px) {
   /* GLOBAL HEADER — switch to the existing functional hamburger menu. */
   body > header nav[aria-label="Main Navigation"] { display: none !important; }
-  body > header .flex.md\\:hidden { display: flex !important; align-items: center; }
+  body > header .flex.md\:hidden { display: flex !important; align-items: center; }
   body > header #mobile-menu.hidden { display: none !important; }
   body > header #mobile-menu:not(.hidden) {
     display: block !important;
