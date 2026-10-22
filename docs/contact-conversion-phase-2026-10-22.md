@@ -1,7 +1,7 @@
 # Tri-Lane — Formularios de prueba con entrega por correo
 
 Fecha: 2026-10-22
-Rama: `optimization-contact-truthful-fallback-20261022`
+Rama original: `optimization-contact-truthful-fallback-20261022` — ajuste visual de feedback: `fix-form-feedback-compact-20261022`
 
 ## Destino TEMPORAL autorizado
 - **Correo de pruebas:** atrezzostudiosv@gmail.com
@@ -21,7 +21,7 @@ Rama: `optimization-contact-truthful-fallback-20261022`
 - FormSubmit es un tercero que procesa formularios (su documentación indica conservación de envíos durante 30 días). Requiere políticas de privacidad y aprobación antes de operar con clientes reales.
 - La lógica exige `response.ok` y `result.success === true || result.success === 'true'`. Un `"false"` como cadena no puede ser interpretado como envío exitoso.
 - Incluso tras la respuesta positiva, el mensaje dice **«accepted by the form service»**, no «email received»: se debe comprobar Gmail.
-- Ante rechazo, activación pendiente o fallo de red, no afirma entrega; ofrece resumen copiable y los canales oficiales existentes.
+- Ante rechazo, activación pendiente o fallo de red, no afirma entrega; muestra un aviso breve de dos líneas. Se eliminó el resumen copiable y los botones adicionales a petición del usuario (2026-10-22).
 - Desactiva el botón durante la petición para prevenir duplicados.
 
 ## Pruebas realizadas
@@ -29,7 +29,8 @@ Rama: `optimization-contact-truthful-fallback-20261022`
 - Pruebas simuladas con respuestas AJAX: `success:"true"`, `success:"false"` por activación, `success:"false"` genérico y excepción de red, correcto.
 - Payload de Contact enviado al endpoint esperado con `POST`/JSON, solo en simulación.
 - Payload del asistente con nombre, correo, servicio, tipo, ciudad, ZIP y texto de la consulta, correcto en simulación.
-- Se restauran los botones y se usan `textContent`/`textarea.value` (sin introducir datos de usuario como HTML).
+- Se restauran los botones; el feedback usa `textContent` (sin introducir datos de usuario como HTML).
+- Revisión adicional: los resultados de éxito, activación pendiente, rechazo genérico y error de red muestran únicamente dos elementos de texto, sin textarea ni acciones extras. Comprobación del asistente y conservación de los cinco HTML, salvo versión del JS.
 - Se preservan CSS, imágenes, H1, `noindex`, navegación y estructura de los formularios.
 
 ## Pruebas que AÚN faltan
@@ -40,7 +41,7 @@ Rama: `optimization-contact-truthful-fallback-20261022`
 5. Probar errores, dispositivo móvil/tablet, tecnologías de asistencia, seguridad, antispam y protección de datos.
 6. Sustituir el correo de pruebas por el destinatario aprobado por Tri-Lane y **activar y repetir las pruebas** de ese destino.
 
-**No se ha emitido ninguna petición POST real desde estas herramientas.** No afirmar entrega hasta verificarla en Gmail.
+**El usuario informa de que recibió un correo durante las pruebas**, pero no se ha identificado si fue el mensaje de activación o la solicitud entregada. No se ha emitido ninguna petición POST real desde estas herramientas. El estado de la entrega de nuevas pruebas sigue pendiente de comprobación.
 
 ## Fuentes técnicas
 - https://formsubmit.co/documentation
