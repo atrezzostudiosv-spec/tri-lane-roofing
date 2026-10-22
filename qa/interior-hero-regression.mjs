@@ -49,6 +49,20 @@ for(const [name,selector] of pages)for(const width of widths){
     if(width<=768)result(label,b.metrics.src.startsWith('interior-hero-'),'responsive hero selected '+b.metrics.src);
     result(label,b.metrics.scrollWidth<=width+1,'no horizontal scroll');
     const diff=compareImages(a.im,b.im);
+    if(diff.avgRGB>1.25){
+      const sections=[];
+      for(let top=0;top<a.im.height;top+=400){
+        let delta=0;
+        for(let y=top;y<Math.min(top+400,a.im.height);y++){
+          for(let x=0;x<a.im.width;x++){
+            const k=(y*a.im.width+x)*4;
+            delta+=Math.abs(a.im.data[k]-b.im.data[k])+Math.abs(a.im.data[k+1]-b.im.data[k+1])+Math.abs(a.im.data[k+2]-b.im.data[k+2]);
+          }
+        }
+        sections.push([top,Number((delta/(Math.min(400,a.im.height-top)*a.im.width*3)).toFixed(4))]);
+      }
+      console.log('DIFF BANDS '+JSON.stringify({name,width,sections}));
+    }
     result(label,diff.avgRGB<=1.25,'full-page visual mean RGB delta '+diff.avgRGB.toFixed(4)+'/255, channels differing '+diff.diffChannels);
     console.log('VISUAL '+JSON.stringify({page:name,width,baselineSource:a.metrics.src,newSource:b.metrics.src,rgb:diff.avgRGB,canvas:[diff.width,diff.height]}));
     checks++;
