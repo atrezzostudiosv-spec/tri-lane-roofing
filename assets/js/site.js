@@ -354,6 +354,18 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             selectedService = preselectedService || '';
             currentWizStep = 1;
             const wizardForm = document.getElementById('wizard-form');
+            if (wizardForm && !document.getElementById('wizard-honey')) {
+                const honeypot = document.createElement('input');
+                honeypot.id = 'wizard-honey';
+                honeypot.name = '_honey';
+                honeypot.type = 'text';
+                honeypot.tabIndex = -1;
+                honeypot.autocomplete = 'off';
+                honeypot.style.position = 'absolute';
+                honeypot.style.left = '-9999px';
+                honeypot.setAttribute('aria-hidden', 'true');
+                wizardForm.appendChild(honeypot);
+            }
             if (wizardForm && !document.getElementById('wizard-preview-notice')) {
                 const notice = document.createElement('p');
                 notice.id = 'wizard-preview-notice';
