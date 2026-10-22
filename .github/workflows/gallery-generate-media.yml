@@ -20,13 +20,13 @@ jobs:
           folder=Path('assets/images')
           files=[
             ('home-intro.webp','gallery-hero',{480:95,800:95}),
-            ('home-gallery-feature.jpg','gallery-feature',{480:92,900:93}),
-            ('gallery-concept-02.webp','gallery-concept-02-thumb',{480:92,900:93}),
-            ('gallery-concept-03.webp','gallery-concept-03-thumb',{480:92,900:93}),
-            ('home-gallery-secondary.jpg','gallery-secondary',{480:92,900:93}),
-            ('home-gallery-detail.jpg','gallery-detail',{480:92,900:93}),
-            ('gallery-concept-06.webp','gallery-concept-06-thumb',{480:92,900:93}),
-            ('gallery-concept-07.webp','gallery-concept-07-thumb',{480:92,900:93})
+            ('home-gallery-feature.jpg','gallery-feature',{480:96,900:96}),
+            ('gallery-concept-02.webp','gallery-concept-02-thumb',{480:96,900:96}),
+            ('gallery-concept-03.webp','gallery-concept-03-thumb',{480:96,900:96}),
+            ('home-gallery-secondary.jpg','gallery-secondary',{480:96,900:96}),
+            ('home-gallery-detail.jpg','gallery-detail',{480:96,900:96}),
+            ('gallery-concept-06.webp','gallery-concept-06-thumb',{480:96,900:96}),
+            ('gallery-concept-07.webp','gallery-concept-07-thumb',{480:96,900:96})
           ]
           total_before=total_after=0
           for original,name,widths in files:
