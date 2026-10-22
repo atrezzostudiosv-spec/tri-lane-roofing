@@ -157,43 +157,105 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
         });
 
         /* ==================== 4. CONTACT FORM VALIDATION ==================== */
+        /* Preview-safe contact handoff: NO BACKEND IS CONFIGURED.
+         * Never mark a request delivered, transmit personal information,
+         * or interpolate user text into innerHTML.
+         */
+        const TRILANE_OFFICIAL_CONTACT = 'https://trilaneroofing.com/contact';
+        const TRILANE_DFW_TEL = 'tel:8177173997';
+
+        function prepareLocalInquiry(statusElement, pairs) {
+            const summary = pairs
+                .filter(pair => pair[1] && String(pair[1]).trim())
+                .map(pair => pair[0] + ': ' + String(pair[1]).trim())
+                .join('\n');
+
+            statusElement.replaceChildren();
+            statusElement.className = 'p-4 rounded text-sm bg-stone-50 border border-stone-300 mt-4 text-stone-800';
+            statusElement.setAttribute('aria-live', 'polite');
+
+            const heading = document.createElement('p');
+            heading.className = 'font-bold mb-2 text-brand-charcoal';
+            heading.textContent = 'Your inquiry is prepared — NOT sent.';
+            statusElement.appendChild(heading);
+
+            const explanation = document.createElement('p');
+            explanation.className = 'text-sm leading-relaxed mb-3';
+            explanation.textContent = 'This website preview has no message-delivery service. No details were sent or saved. Copy your request and use Tri-Lane’s official contact page, or call the DFW office.';
+            statusElement.appendChild(explanation);
+
+            const draft = document.createElement('textarea');
+            draft.className = 'w-full border border-stone-300 rounded p-3 text-sm bg-white mb-3';
+            draft.readOnly = true;
+            draft.rows = Math.min(10, Math.max(4, summary.split('\n').length + 1));
+            draft.value = summary;
+            draft.setAttribute('aria-label', 'Copyable inquiry details');
+            statusElement.appendChild(draft);
+
+            const controls = document.createElement('div');
+            controls.className = 'flex flex-wrap items-center gap-3';
+            const copy = document.createElement('button');
+            copy.type = 'button';
+            copy.className = 'bg-brand-charcoal text-white font-bold px-4 py-2 rounded text-sm';
+            copy.textContent = 'COPY DETAILS';
+            copy.addEventListener('click', async () => {
+                try {
+                    if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard unavailable');
+                    await navigator.clipboard.writeText(summary);
+                    copy.textContent = 'COPIED';
+                } catch (error) {
+                    draft.focus();
+                    draft.select();
+                    copy.textContent = 'SELECTED — COPY MANUALLY';
+                }
+            });
+            controls.appendChild(copy);
+
+            const official = document.createElement('a');
+            official.href = TRILANE_OFFICIAL_CONTACT;
+            official.target = '_blank';
+            official.rel = 'noopener noreferrer';
+            official.className = 'font-bold text-brand-charcoal underline text-sm';
+            official.textContent = 'OFFICIAL CONTACT PAGE ↗';
+            controls.appendChild(official);
+
+            const phone = document.createElement('a');
+            phone.href = TRILANE_DFW_TEL;
+            phone.className = 'font-bold text-brand-charcoal underline text-sm';
+            phone.textContent = 'CALL (817) 717-3997';
+            controls.appendChild(phone);
+
+            statusElement.appendChild(controls);
+            statusElement.classList.remove('hidden');
+        }
+
         function handleContactSubmit(e) {
             e.preventDefault();
-            
+
             const name = document.getElementById('contact-name').value.trim();
             const phone = document.getElementById('contact-phone').value.trim();
             const email = document.getElementById('contact-email').value.trim();
+            const city = document.getElementById('contact-city').value.trim();
             const service = document.getElementById('contact-service').value;
             const message = document.getElementById('contact-message').value.trim();
             const statusMsg = document.getElementById('form-status-msg');
+            const missingName = !name;
+            const missingContact = !phone && !email;
 
-            let isValid = true;
+            document.getElementById('err-name').classList.toggle('hidden', !missingName);
+            document.getElementById('err-phone').classList.toggle('hidden', !missingContact);
+            document.getElementById('err-email').classList.toggle('hidden', !missingContact);
 
-            if (!name) {
-                document.getElementById('err-name').classList.remove('hidden');
-                isValid = false;
-            } else {
-                document.getElementById('err-name').classList.add('hidden');
-            }
-
-            if (!phone && !email) {
-                document.getElementById('err-phone').classList.remove('hidden');
-                document.getElementById('err-email').classList.remove('hidden');
-                isValid = false;
-            } else {
-                document.getElementById('err-phone').classList.add('hidden');
-                document.getElementById('err-email').classList.add('hidden');
-            }
-
-            if (isValid) {
+            if (missingName || missingContact || !service || !message) {
                 statusMsg.className = 'p-4 rounded text-sm bg-amber-50 border border-amber-300 text-amber-900 mt-4';
-                statusMsg.innerHTML = `
-                    <strong>Inquiry Validated locally:</strong> Backend integration pending verification. 
-                    Your inquiry details for <em>${service}</em> have been logged in prototype state. 
-                    Please call DFW <strong>(817) 717-3997</strong> for immediate response.
-                `;
-                statusMsg.classList.remove('hidden');
+                statusMsg.textContent = 'Please complete your name, a phone number or email, the service, and the project description. Nothing has been sent.';
+                statusMsg.setAttribute('aria-live','polite');
+                return;
             }
+            prepareLocalInquiry(statusMsg, [
+                ['Name',name], ['Phone',phone], ['Email',email], ['City or ZIP',city],
+                ['Service',service], ['Project details',message]
+            ]);
         }
 
         /* ==================== 5. MULTISTEP WIZARD ASSISTANT ==================== */
@@ -201,10 +263,21 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
         let selectedService = '';
 
         function openInquiryModal(preselectedService = '') {
-            if (preselectedService) {
-                selectedService = preselectedService;
-            }
+            selectedService = preselectedService || '';
             currentWizStep = 1;
+            const wizardForm = document.getElementById('wizard-form');
+            if (wizardForm && !document.getElementById('wizard-preview-notice')) {
+                const notice = document.createElement('p');
+                notice.id = 'wizard-preview-notice';
+                notice.className = 'text-xs leading-relaxed text-stone-600 mb-4';
+                notice.textContent = 'Demo preview: this assistant does not send or store requests. You can prepare the details, then copy them or contact Tri-Lane through its official channels.';
+                wizardForm.prepend(notice);
+            }
+            const wizardStatus = document.getElementById('wiz-status');
+            if (wizardStatus) {
+                wizardStatus.replaceChildren();
+                wizardStatus.className = 'p-3 rounded text-xs hidden';
+            }
             updateWizardUI();
             document.getElementById('inquiry-modal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -279,7 +352,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             } else {
                 prevBtn.classList.remove('hidden');
                 nextBtn.classList.remove('hidden');
-                nextBtn.innerText = currentWizStep === 4 ? "Submit Inquiry" : "Continue";
+                nextBtn.innerText = currentWizStep === 4 ? "Prepare Contact Options" : "Continue";
             }
 
             // Populate Summary on Step 4
@@ -297,16 +370,22 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             const status = document.getElementById('wiz-status');
 
             if (!name || !contact) {
-                alert('Please provide your name and contact info.');
+                status.className = 'p-3 rounded text-xs bg-amber-50 border border-amber-300 text-amber-900 mt-2';
+                status.textContent = 'Enter your name and a phone number or email to prepare the inquiry. Nothing has been sent.';
+                status.setAttribute('aria-live','polite');
                 return;
             }
 
-            status.className = "p-3 rounded text-xs bg-amber-50 border border-amber-300 text-amber-900 block mt-2";
-            status.innerHTML = `
-                <strong>Inquiry Form Submitted:</strong> Backend destination is pending configuration. 
-                Your preliminary request for <em>${selectedService}</em> has been verified on the front-end. 
-                Call DFW Headquarters directly at <strong>(817) 717-3997</strong> for scheduling.
-            `;
+            const type = document.querySelector('input[name="wiz-type"]:checked');
+            prepareLocalInquiry(status, [
+                ['Name', name],
+                ['Phone or email',contact],
+                ['Service',selectedService || 'Not sure yet'],
+                ['Inquiry type',type ? type.value : 'General question'],
+                ['Additional notes',document.getElementById('wiz-notes').value.trim()],
+                ['City',document.getElementById('wiz-city').value.trim()],
+                ['ZIP Code',document.getElementById('wiz-zip').value.trim()]
+            ]);
         }
 
 
