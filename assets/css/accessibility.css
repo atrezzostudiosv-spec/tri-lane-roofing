@@ -1,0 +1,44 @@
+/* ATREZZO: WCAG 2.2 AA targeted typographic contrast corrections.
+   Original brand-orange (#F58620) remains on backgrounds, ornaments and icons.
+   Only foreground colors change; no geometry or animation rules. */
+
+/* Orange buttons need dark ink instead of white for a 4.5:1+ contrast. */
+button.bg-brand-orange,
+a.bg-brand-orange,
+#inquiry-modal #wiz-next-btn,
+#contact-form button[type="submit"],
+.tl-wwd-feature .tl-wwd-primary,
+.tl-wwd-all > a,
+#tl-sv-top .sv-primary,
+#at-about-v1 .at-about-cta {
+  color: #171B1E;
+}
+button.bg-brand-orange > span,
+a.bg-brand-orange > span {
+  color: #171B1E;
+}
+
+/* Small orange text on light backgrounds needs deeper orange ink. */
+main .bg-brand-stone .text-brand-orange,
+main .bg-white .text-brand-orange,
+main .bg-stone-50 .text-brand-orange,
+#inquiry-modal .text-brand-orange,
+#tl-sv-top .sv-roofing .sv-eyebrow,
+#tl-sv-top .sv-exteriors .sv-eyebrow,
+#at-about-v1 .at-about-company .at-about-label,
+#at-about-v1 .at-about-values .at-about-label,
+#at-about-v1 .at-about-company .at-about-num,
+#at-about-v1 .at-about-values .at-about-value-number,
+#at-about-v1 .at-about-diff-item.is-active .at-about-diff-index {
+  color: #934100;
+}
+
+/* Highlight the current navigation item visibly, with adequate contrast on charcoal. */
+header nav a[aria-current="page"] {
+  color: #FFBA7A;
+}
+
+/* Keep illustration disclaimer above 4.5:1 on the pale canvas. */
+body[data-page="home"] .tl-featured-disclaimer {
+  color: #5F5F5C;
+}
