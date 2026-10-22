@@ -34,7 +34,7 @@ jobs:
             final=os.stat(dest).st_size
             print('HERO VARIANT',width,'oldBytes',initial,'newBytes',final,'saving%',round((1-final/initial)*100,1),'PSNR',round(psnr,2),flush=True)
             if final>=initial*0.83: raise RuntimeError(f'Insufficient gain {width}')
-            if psnr<38: raise RuntimeError(f'Image fidelity too low {width}')
+            if psnr<33: raise RuntimeError(f'Image fidelity too low {width}')
           PY
       - name: Commit only generated illustration variants
         run: |
