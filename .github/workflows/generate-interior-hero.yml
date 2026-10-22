@@ -1,0 +1,45 @@
+name: Temporary interior hero source-preserving WebP variants
+
+on:
+  push:
+    branches: [optimize-about-services-hero-20261023]
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python image library
+        run: python3 -m pip install --quiet Pillow
+      - name: Produce fidelity-checked WebP copies from existing approved illustration
+        run: |
+          python3 - <<'PY'
+          from PIL import Image,ImageChops,ImageStat
+          from pathlib import Path
+          import os,math
+          root=Path('assets/images')
+          for width in [640,960,1280]:
+            orig=root/f'home-hero-{width}.webp'
+            image=Image.open(orig).convert('RGB')
+            dest=root/f'interior-hero-{width}.webp'
+            image.save(dest,'WEBP',quality=95,method=6)
+            c=Image.open(dest).convert('RGB')
+            assert image.size==c.size
+            rms=ImageStat.Stat(ImageChops.difference(image,c)).rms
+            mse=sum(v*v for v in rms)/3
+            psnr=10*math.log10(255*255/mse) if mse else 100
+            initial=os.stat(orig).st_size
+            final=os.stat(dest).st_size
+            print('HERO VARIANT',width,'oldBytes',initial,'newBytes',final,'saving%',round((1-final/initial)*100,1),'PSNR',round(psnr,2),flush=True)
+            if final>=initial*0.83: raise RuntimeError(f'Insufficient gain {width}')
+            if psnr<38: raise RuntimeError(f'Image fidelity too low {width}')
+          PY
+      - name: Commit only generated illustration variants
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/images/interior-hero-*.webp
+          git commit -m "Generate high-fidelity smaller copies of existing approved About and Services hero"
+          git push origin HEAD:optimize-about-services-hero-20261023
