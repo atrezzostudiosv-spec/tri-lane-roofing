@@ -1,4 +1,4 @@
-name: Post-responsive-image Lighthouse audit
+name: Lighthouse audit after static CSS release
 
 on:
   push:
@@ -10,64 +10,67 @@ permissions:
 jobs:
   lighthouse:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 24
     steps:
-      - name: Checkout performance audit branch
-        uses: actions/checkout@v4
-      - name: Node.js 22
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Confirm published Hero HTML matches integrated PR
+      - name: Verify current published CSS and responsive Home before measuring
         run: |
           set -euo pipefail
           URL="https://atrezzostudiosv-spec.github.io/tri-lane-roofing/index.html"
           for i in $(seq 1 24); do
             if curl -L -fsS --connect-timeout 15 --max-time 40 "$URL" -o /tmp/tri-lane-home.html &&
-               grep -q 'fetchpriority="high"' /tmp/tri-lane-home.html &&
-               grep -q 'rel="preload" as="image"' /tmp/tri-lane-home.html &&
-               grep -q 'home-hero-640.webp 640w' /tmp/tri-lane-home.html; then
-              echo "Published production demo includes the approved hero preload."
+               grep -q 'home-hero-640.webp 640w' /tmp/tri-lane-home.html &&
+               grep -q 'tailwind-runtime-home.css' /tmp/tri-lane-home.html &&
+               ! grep -q 'cdn.tailwindcss.com' /tmp/tri-lane-home.html; then
+              echo "Confirmed newly published responsive Home and locally captured Tailwind CSS."
               exit 0
             fi
-            echo "Deployment not current, retrying check $i/24"
+            echo "Awaiting updated GitHub Pages: $i/24"
             sleep 10
           done
-          echo "::error::Live site did not expose the merged hero HTML"
+          echo "::error::Live site did not expose the merged CSS replacement"
           exit 1
-      - name: Install Lighthouse CLI only
+      - name: Install Lighthouse lab runner
         run: npm install --no-save lighthouse@12.8.2
-      - name: Audit Home (mobile)
+      - name: Audit Home mobile three times
         env:
           CHROME_PATH: /usr/bin/google-chrome
         run: |
-          npx lighthouse https://atrezzostudiosv-spec.github.io/tri-lane-roofing/index.html --form-factor=mobile --only-categories=performance --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --output=json --output-path=/tmp/tri-lane-mobile.json --quiet
-      - name: Audit Home (desktop)
+          for i in 1 2 3; do
+            npx lighthouse https://atrezzostudiosv-spec.github.io/tri-lane-roofing/index.html --form-factor=mobile --only-categories=performance --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --output=json --output-path="/tmp/tri-lane-mobile-$i.json" --quiet
+          done
+      - name: Audit Home desktop
         env:
           CHROME_PATH: /usr/bin/google-chrome
         run: |
           npx lighthouse https://atrezzostudiosv-spec.github.io/tri-lane-roofing/index.html --preset=desktop --only-categories=performance --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --output=json --output-path=/tmp/tri-lane-desktop.json --quiet
-      - name: Summarize measured lab metrics
+      - name: Summarize measured scores and timings
         run: |
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
-          for (const screen of ['mobile','desktop']){
-            const report=JSON.parse(fs.readFileSync('/tmp/tri-lane-'+screen+'.json','utf8'));
-            const ids=['first-contentful-paint','largest-contentful-paint','speed-index','total-blocking-time','cumulative-layout-shift'];
-            console.log('LIGHTHOUSE '+screen.toUpperCase()+': '+JSON.stringify({
-              finalUrl:report.finalDisplayedUrl,
-              performance:Math.round((report.categories.performance?.score??0)*100),
-              metrics:Object.fromEntries(ids.map(id=>[id,report.audits[id]?.displayValue??'unavailable'])),
-              opportunities: Object.values(report.audits).filter(a=>a.details?.type==='opportunity'&&a.details.overallSavingsMs>0)
-                .sort((a,b)=>b.details.overallSavingsMs-a.details.overallSavingsMs).slice(0,6)
-                .map(a=>({id:a.id,title:a.title,savingsMs:Math.round(a.details.overallSavingsMs)}))
-            },null,2));
-          }
+          const reports=[1,2,3].map(i=>JSON.parse(fs.readFileSync('/tmp/tri-lane-mobile-'+i+'.json','utf8')));
+          const desk=JSON.parse(fs.readFileSync('/tmp/tri-lane-desktop.json','utf8'));
+          const get=x=>({score:Math.round(x.categories.performance.score*100),
+            fcpMs:Math.round(x.audits['first-contentful-paint'].numericValue),
+            lcpMs:Math.round(x.audits['largest-contentful-paint'].numericValue),
+            tbtMs:Math.round(x.audits['total-blocking-time'].numericValue),
+            cls:x.audits['cumulative-layout-shift'].numericValue,
+            opportunities:Object.values(x.audits).filter(a=>a.details?.type==='opportunity'&&a.details.overallSavingsMs>0)
+              .sort((a,b)=>b.details.overallSavingsMs-a.details.overallSavingsMs).slice(0,5)
+              .map(a=>({id:a.id,savingsMs:Math.round(a.details.overallSavingsMs)}))});
+          const values=reports.map(get), d=get(desk);
+          const median=key=>[...values].map(x=>x[key]).sort((a,b)=>a-b)[1];
+          console.log('POST-STATIC CSS MOBILE RUNS '+JSON.stringify(values));
+          console.log('POST-STATIC CSS MOBILE MEDIAN '+JSON.stringify({
+            score:median('score'),fcpMs:median('fcpMs'),lcpMs:median('lcpMs'),tbtMs:median('tbtMs'),cls:median('cls')}));
+          console.log('POST-STATIC CSS DESKTOP '+JSON.stringify(d));
           NODE
-      - name: Upload audit JSON reports
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: tri-lane-lighthouse-post-responsive-20261022
+          name: tri-lane-lighthouse-post-static-20261022
           path: /tmp/tri-lane-*.json
           if-no-files-found: ignore
