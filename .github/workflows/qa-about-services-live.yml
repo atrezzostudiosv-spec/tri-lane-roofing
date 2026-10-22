@@ -1,0 +1,80 @@
+name: About Services hero live performance benchmark
+on:
+  push:
+    branches: [audit-about-services-live-20261023]
+permissions:
+  contents: read
+jobs:
+  benchmark:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 27
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Confirm optimized media is published in both pages
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 32); do
+            ready=0
+            for page in about services; do
+              if curl -fsSL --connect-timeout 10 --max-time 25 "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/${page}.html" -o "/tmp/tl-${page}.html" &&
+                 grep -q 'interior-hero-960.webp' "/tmp/tl-${page}.html" &&
+                 grep -q 'imagesrcset=' "/tmp/tl-${page}.html"; then ready=$((ready+1)); fi
+            done
+            if [ "$ready" -eq 2 ]; then echo 'BOTH PAGES LIVE WITH CORRECT PHOTO VARIANTS'; exit 0; fi
+            echo "Release pending attempt $i";sleep 10
+          done
+          echo "::error::Release not yet published";exit 1
+      - run: npm install --no-save lighthouse@12.8.2
+      - name: Run three mobile Lighthouse trials per page
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          set -euo pipefail
+          mkdir -p qa-mobile
+          for page in about services; do
+            for n in 1 2 3; do
+              npx lighthouse "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/${page}.html" --form-factor=mobile --only-categories=performance --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --output=json --output-path="qa-mobile/${page}-${n}.json" --quiet
+            done
+          done
+      - name: One desktop Lighthouse run per page
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          set -euo pipefail
+          for page in about services; do
+            npx lighthouse "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/${page}.html" --preset=desktop --only-categories=performance --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --output=json --output-path="qa-mobile/${page}-desktop.json" --quiet
+          done
+      - name: Print sample results and mobile medians
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          for(const page of ['about','services']){
+            const results=[];
+            for(const file of [page+'-1.json',page+'-2.json',page+'-3.json',page+'-desktop.json']){
+              const r=JSON.parse(fs.readFileSync('qa-mobile/'+file,'utf8'));
+              const a=r.audits,resources=a['network-requests']?.details?.items||[];
+              const hero=resources.find(x=>x.url?.includes('/assets/images/interior-hero-'));
+              const record={
+               page,run:file,score:Math.round(r.categories.performance.score*100),
+               fcpMs:Math.round(a['first-contentful-paint'].numericValue),
+               lcpMs:Math.round(a['largest-contentful-paint'].numericValue),
+               tbtMs:Math.round(a['total-blocking-time'].numericValue),
+               cls:Number(a['cumulative-layout-shift'].numericValue.toFixed(4)),
+               heroTransferBytes:hero?.transferSize||null,
+               lcpSelector:a['largest-contentful-paint-element']?.details?.items?.[0]?.items?.[0]?.node?.selector||null
+              };
+              results.push(record);console.log('INTERIOR HERO MEASUREMENT '+JSON.stringify(record));
+            }
+            const median=k=>results.slice(0,3).map(x=>x[k]).sort((a,b)=>a-b)[1];
+            console.log('INTERIOR HERO MOBILE MEDIAN '+JSON.stringify({page,score:median('score'),lcpMs:median('lcpMs'),fcpMs:median('fcpMs'),tbtMs:median('tbtMs'),cls:median('cls')}));
+          }
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tri-lane-about-services-posthero-20261023
+          path: qa-mobile/
+          if-no-files-found: ignore
