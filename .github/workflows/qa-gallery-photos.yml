@@ -1,0 +1,27 @@
+name: Temporary Gallery optimization visual regression
+on:
+  push:
+    branches: [optimize-gallery-mobile-20261022]
+permissions:
+  contents: read
+jobs:
+  gallery-parity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.56.1 pngjs@7.0.0
+      - name: Compare Gallery screen geometry and original-resolution fullscreen viewer
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git worktree add --detach /tmp/tri-lane-gallery-baseline origin/main
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory /tmp/tri-lane-gallery-baseline >/tmp/gbase.log 2>&1 &
+          python3 -m http.server 8766 --bind 127.0.0.1 --directory . >/tmp/gcandidate.log 2>&1 &
+          sleep 3
+          node qa/gallery-photo-qa.mjs
