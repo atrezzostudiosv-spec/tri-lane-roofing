@@ -4,7 +4,7 @@ const cases=[['index.html','wizard'],['contact.html','wizard'],['gallery.html','
 let all=[];
 try{
 for(const [file,mode] of cases){
-const page=await browser.newPage({viewport:{width:375,height:900},reducedMotion:'reduce'});
+const context=await browser.newContext({viewport:{width:375,height:900},reducedMotion:'reduce'});const page=await context.newPage();
 try{
 await page.goto('http://127.0.0.1:8766/'+file,{waitUntil:'load',timeout:60000});
 const steps=[];
@@ -32,7 +32,7 @@ for(const step of steps){
  const issues=scan.violations.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary})).slice(0,12)}));
  all.push({file,step,issues});console.log('OVERLAY A11Y '+JSON.stringify({file,step,issues}));
 }
-}finally{await page.close()}
+}finally{await context.close()}
 }
 }finally{await browser.close()}
 console.log('OVERLAY SUMMARY '+JSON.stringify(all));
