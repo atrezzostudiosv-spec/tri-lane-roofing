@@ -17,7 +17,7 @@ const body=document.body;
 const rect=el=>{const r=el.getBoundingClientRect(),s=getComputedStyle(el);return [r.x,r.y,r.width,r.height,s.fontFamily,s.fontWeight,s.fontSize,s.lineHeight,s.color,s.backgroundColor]};
 return {sw:document.documentElement.scrollWidth,sh:document.documentElement.scrollHeight,
     fontChecks:[...document.querySelectorAll('header nav, header button, i.fa-solid, #at-gallery-redesign h1,#at-gallery-redesign h2,#at-gallery-redesign p,#at-gallery-redesign .at-gallery-tile,#at-gallery-redesign .at-gallery-cta')].slice(0,35).map(rect),
-    stylesheet:[...document.querySelectorAll('link[rel=stylesheet]')].map(n=>n.href),
+    stylesheet:[...document.querySelectorAll('link[rel=stylesheet]')].map(n=>new URL(n.href).pathname+new URL(n.href).search),
     iconVersion:getComputedStyle(document.querySelector('i.fa-solid')).fontFamily,
     high:document.querySelector('.at-gallery-hero-photo').getAttribute('fetchpriority'),
     low:[...document.querySelectorAll('.at-gallery-tile img')].map(n=>n.getAttribute('fetchpriority'))
@@ -26,8 +26,10 @@ await page.waitForTimeout(350);
 const snap=PNG.sync.read(await page.screenshot({fullPage:true,animations:'disabled'}));
 const tiles=await page.locator('.at-gallery-tile').count();if(tiles!==7)throw Error('Tiles missing '+tiles);
 await page.locator('.at-gallery-tile').first().click();await page.locator('#at-gallery-viewer-img').evaluate(x=>x.decode());
+await page.locator('#at-gallery-project-thumbs img').evaluateAll(async els=>{await Promise.all(els.map(el=>el.decode().catch(()=>null)));});
+await page.waitForTimeout(100);
 const modal=PNG.sync.read(await page.screenshot({animations:'disabled'}));
-const loaded=await page.locator('#at-gallery-viewer-img').evaluate(x=>({src:x.src,width:x.naturalWidth}));
+const loaded=await page.locator('#at-gallery-viewer-img').evaluate(x=>({src:new URL(x.src).pathname,width:x.naturalWidth}));
 await page.keyboard.press('Escape');const closed=await page.locator('#at-gallery-viewer').evaluate(x=>x.hidden);
 results.push({checks,snap,modal,loaded,closed});await page.close();
 }
