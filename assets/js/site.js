@@ -157,14 +157,13 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
         });
 
         /* ==================== 4. CONTACT FORM VALIDATION ==================== */
-        /* DEMO EMAIL TESTING (temporary): FormSubmit AJAX delivers to
-         * Atrezzo's test mailbox only after destination activation.
-         * Replace/approve the recipient and test again before client launch.
+        /* Temporary routing for the site under review. The client must approve
+         * a new destination and that address must be activated before launch.
          */
         const TRILANE_OFFICIAL_CONTACT = 'https://trilaneroofing.com/contact';
         const TRILANE_DFW_TEL = 'tel:8177173997';
-        const TRILANE_FORM_TEST_EMAIL = 'atrezzostudiosv@gmail.com';
-        const TRILANE_FORM_ENDPOINT = 'https://formsubmit.co/ajax/' + TRILANE_FORM_TEST_EMAIL;
+        const TRILANE_FORM_RECIPIENT = 'atrezzostudiosv@gmail.com';
+        const TRILANE_FORM_ENDPOINT = 'https://formsubmit.co/ajax/' + TRILANE_FORM_RECIPIENT;
         let triLaneFormPending = false;
 
         function setTriLaneFeedback(statusElement, type, title, description) {
@@ -189,22 +188,22 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
         /* "success" can be the STRING "false" in FormSubmit responses.
          * Never treat a 200 HTTP status or a non-empty string as delivered.
          */
-        async function sendTriLaneTestInquiry(statusElement, fields, button) {
+        async function sendTriLaneInquiry(statusElement, fields, button) {
             if (triLaneFormPending) return;
             triLaneFormPending = true;
             const originalLabel = button ? button.textContent : '';
             if (button) {
                 button.disabled = true;
                 button.setAttribute('aria-busy', 'true');
-                button.textContent = 'SENDING TEST…';
+                button.textContent = 'SENDING…';
             }
 
-            setTriLaneFeedback(statusElement, 'pending', 'Sending test request…',
-                'Submitting sample details to FormSubmit for delivery to the Atrezzo Studios test inbox. Do not close the page yet.');
+            setTriLaneFeedback(statusElement, 'pending', 'Sending your message…',
+                'Please keep this page open.');
 
             try {
                 const payload = Object.assign({
-                    _subject: 'Tri-Lane Website DEMO — Test Inquiry',
+                    _subject: 'Tri-Lane Roofing — Website Inquiry',
                     _url: window.location.href,
                     _honey: ''
                 }, fields);
@@ -220,19 +219,19 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
                 const result = await response.json();
                 if (response.ok && (result.success === true || result.success === 'true')) {
                     setTriLaneFeedback(statusElement, 'success',
-                        'Test request accepted.',
-                        'Check the Atrezzo test inbox to confirm delivery.');
+                        'Message submitted.',
+                        'Your inquiry was accepted for delivery to Atrezzo Studios while this website is under review.');
                     return;
                 }
 
                 const providerMessage = String(result && result.message || '');
                 const activationNeeded = /activat|confirm.*email/i.test(providerMessage);
                 const reason = activationNeeded
-                    ? 'Please confirm the FormSubmit activation email and try again.'
+                    ? 'The recipient must confirm its email address before messages can be delivered. Please try again afterward.'
                     : 'The service did not confirm this request. Please try again.';
-                setTriLaneFeedback(statusElement, 'error', 'Test not confirmed.', reason);
+                setTriLaneFeedback(statusElement, 'error', 'Message not sent.', reason);
             } catch (error) {
-                setTriLaneFeedback(statusElement, 'error', 'Test not confirmed.',
+                setTriLaneFeedback(statusElement, 'error', 'Message not sent.',
                     'A connection error occurred. Please try again.');
             } finally {
                 triLaneFormPending = false;
@@ -270,7 +269,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             }
             if (document.getElementById('contact-honey')?.value) return;
             const submitButton = document.querySelector('#contact-form button[type="submit"]');
-            await sendTriLaneTestInquiry(statusMsg, {
+            await sendTriLaneInquiry(statusMsg, {
                 name, phone, email, city_or_zip: city, service, message,
                 form_type: 'Contact page'
             }, submitButton);
@@ -300,7 +299,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
                 const notice = document.createElement('p');
                 notice.id = 'wizard-preview-notice';
                 notice.className = 'text-xs leading-relaxed text-stone-600 mb-4';
-                notice.textContent = 'TEST MODE: this assistant sends the information you enter through FormSubmit to Atrezzo Studios (' + TRILANE_FORM_TEST_EMAIL + '), not to Tri-Lane. Use sample information only; avoid sensitive personal data.';
+                notice.textContent = 'Inquiries currently go to Atrezzo Studios through FormSubmit, not directly to Tri-Lane Roofing. Please avoid sharing sensitive personal information.';
                 wizardForm.prepend(notice);
             }
             const wizardStatus = document.getElementById('wiz-status');
@@ -382,7 +381,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             } else {
                 prevBtn.classList.remove('hidden');
                 nextBtn.classList.remove('hidden');
-                nextBtn.innerText = currentWizStep === 4 ? "SEND TEST" : "Continue";
+                nextBtn.innerText = currentWizStep === 4 ? "SEND INQUIRY" : "Continue";
             }
 
             // Populate Summary on Step 4
@@ -421,7 +420,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
                 'Notes: ' + notes, 'City: ' + city, 'ZIP: ' + zip
             ].join('\n');
 
-            await sendTriLaneTestInquiry(status, {
+            await sendTriLaneInquiry(status, {
                 name, email, phone, city, zip,
                 service, inquiry_type: inquiryType, message,
                 form_type: 'Project inquiry assistant'
