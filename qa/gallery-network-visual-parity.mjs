@@ -27,7 +27,8 @@ const snap=PNG.sync.read(await page.screenshot({fullPage:true,animations:'disabl
 const tiles=await page.locator('.at-gallery-tile').count();if(tiles!==7)throw Error('Tiles missing '+tiles);
 await page.locator('.at-gallery-tile').first().click();await page.locator('#at-gallery-viewer-img').evaluate(x=>x.decode());
 await page.locator('#at-gallery-project-thumbs img').evaluateAll(async els=>{await Promise.all(els.map(el=>el.decode().catch(()=>null)));});
-await page.waitForTimeout(100);
+await page.evaluate(()=>document.fonts.ready);
+await page.waitForTimeout(400);
 const modal=PNG.sync.read(await page.screenshot({animations:'disabled'}));
 const loaded=await page.locator('#at-gallery-viewer-img').evaluate(x=>({src:new URL(x.src).pathname,width:x.naturalWidth}));
 await page.keyboard.press('Escape');const closed=await page.locator('#at-gallery-viewer').evaluate(x=>x.hidden);
