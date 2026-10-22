@@ -62,7 +62,7 @@ function diff(a,b,variant,page,width) {
  const pct=changed/pixels*100;
  if(pct>0.05)issues.push('pixel-diff '+pct.toFixed(4)+'% (>0.05%)');
  return {variant,page,width,differencePercent:Math.round(pct*10000)/10000,geometryMaxPx:Math.round(geom*10)/10,
-   htmlHeight:x.height,images:y.loaded,requestsFailed:y.failedRequests.length,issues};
+   htmlHeight:x.height,images:y.loaded,requestsFailed:b.failedRequests.length,issues};
 }
 (async()=>{
  const browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
