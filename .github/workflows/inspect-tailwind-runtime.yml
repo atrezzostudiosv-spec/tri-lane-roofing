@@ -1,0 +1,40 @@
+name: Inspect exact Tailwind runtime styles
+
+on:
+  push:
+    branches: [investigation-tailwind-runtime-20261022]
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.56.1
+      - name: Inspect stylesheets in browser without modifying website
+        run: |
+          python3 -m http.server 8766 --bind 127.0.0.1 --directory . >/tmp/inspect-tailwind.log 2>&1 &
+          sleep 2
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright';
+          const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox']});
+          try{
+            for(const name of ['index.html','about.html','services.html','gallery.html','contact.html']){
+              const page=await browser.newPage({viewport:{width:1440,height:900}});
+              await page.goto('http://127.0.0.1:8766/'+name,{waitUntil:'load',timeout:45000});
+              await page.waitForTimeout(1000);
+              const result=await page.evaluate(()=>({
+                styles:[...document.querySelectorAll('style')].map((e,i)=>({i,id:e.id,attrs:e.getAttributeNames().map(x=>[x,e.getAttribute(x)]),length:e.textContent.length,preview:e.textContent.slice(0,180)})),
+                sheets:[...document.styleSheets].map((e,i)=>({i,owner:e.ownerNode?.tagName,id:e.ownerNode?.id,href:e.href,ruleCount:(()=>{try{return e.cssRules.length}catch{return -1}})()}))
+              }));
+              console.log('STYLE INSPECTION '+name+' '+JSON.stringify(result));
+              await page.close();
+            }
+          }finally{await browser.close();}
+          JS
