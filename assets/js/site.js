@@ -247,6 +247,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             document.getElementById('err-email').classList.toggle('hidden', !missingContact);
 
             if (missingName || missingContact || !service || !message) {
+                statusMsg.replaceChildren();
                 statusMsg.className = 'p-4 rounded text-sm bg-amber-50 border border-amber-300 text-amber-900 mt-4';
                 statusMsg.textContent = 'Please complete your name, a phone number or email, the service, and the project description. Nothing has been sent.';
                 statusMsg.setAttribute('aria-live','polite');
