@@ -1,0 +1,61 @@
+name: Gallery network-priority post-release measurement
+on:
+  push:
+    branches: [audit-gallery-network-release-20261022]
+permissions:
+  contents: read
+jobs:
+  lighthouse-mobile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Confirm exact gallery network-priority release is live
+        run: |
+          set -euo pipefail
+          for n in $(seq 1 30); do
+            curl -fsSL --max-time 30 "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/gallery.html" -o /tmp/tl-gallery.html || true
+            if grep -q 'https://cdnjs.cloudflare.com" rel="preconnect"' /tmp/tl-gallery.html &&
+               grep -q 'fetchpriority="low"' /tmp/tl-gallery.html &&
+               grep -q 'href="assets/css/accessibility.css' /tmp/tl-gallery.html; then
+               echo "Gallery optimized network-priority release verified"
+               exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Published Gallery does not have targeted release"
+          exit 1
+      - run: npm install --no-save lighthouse@12.8.2
+      - name: Three mobile Lighthouse lab runs on published Gallery
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          set -euo pipefail
+          mkdir -p qa-results
+          for i in 1 2 3; do
+             npx lighthouse https://atrezzostudiosv-spec.github.io/tri-lane-roofing/gallery.html --form-factor=mobile --only-categories=performance --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --output=json --output-path="qa-results/gallery-mobile-$i.json" --quiet
+          done
+      - name: Emit exact benchmark numbers
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const m=[1,2,3].map(i=>{
+             const r=JSON.parse(fs.readFileSync('qa-results/gallery-mobile-'+i+'.json','utf8'));
+             return {score:Math.round(r.categories.performance.score*100),
+              fcp:Math.round(r.audits['first-contentful-paint'].numericValue),
+              lcp:Math.round(r.audits['largest-contentful-paint'].numericValue),
+              cls:Number(r.audits['cumulative-layout-shift'].numericValue.toFixed(4)),
+              tbt:Math.round(r.audits['total-blocking-time'].numericValue)};
+          });
+          const med=k=>[...m].sort((a,b)=>a[k]-b[k])[1][k];
+          m.forEach((r,i)=>console.log('NETWORK PRIORITY MOBILE RUN '+(i+1)+' '+JSON.stringify(r)));
+          console.log('NETWORK PRIORITY MOBILE MEDIAN '+JSON.stringify({score:med('score'),fcp:med('fcp'),lcp:med('lcp'),cls:med('cls'),tbt:med('tbt')}));
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tri-lane-gallery-network-priority-lighthouse-20261022
+          path: qa-results/
+          if-no-files-found: ignore
