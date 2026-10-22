@@ -1,0 +1,42 @@
+name: Temporary image optimization QA
+on:
+  push:
+    branches:
+      - optimization-image-assets-20261022
+permissions:
+  contents: read
+jobs:
+  visual-comparison:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare main baseline
+        run: git worktree add --detach /tmp/tri-lane-main origin/main
+      - name: Install temporary testing dependencies
+        run: |
+          mkdir -p /tmp/atrezzo-image-qa
+          npm install --prefix /tmp/atrezzo-image-qa --no-audit --no-fund playwright@1.56.1 pngjs@7
+          /tmp/atrezzo-image-qa/node_modules/.bin/playwright install --with-deps chromium
+      - name: Start two local preview servers
+        run: |
+          nohup python3 -m http.server 8761 --bind 127.0.0.1 --directory /tmp/tri-lane-main >/tmp/tri-lane-main-server.log 2>&1 &
+          nohup python3 -m http.server 8762 --bind 127.0.0.1 --directory . >/tmp/tri-lane-optimized-server.log 2>&1 &
+          sleep 2
+          curl --fail --silent --output /dev/null http://127.0.0.1:8761/services.html
+          curl --fail --silent --output /dev/null http://127.0.0.1:8762/gallery.html
+      - name: Compare pixel screenshots, grids, images, responsive and lightbox
+        run: node qa/image-compare.cjs
+      - name: Upload comparison evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tri-lane-image-qa-comparison
+          path: /tmp/tri-lane-image-qa
+          if-no-files-found: warn
+          retention-days: 3
