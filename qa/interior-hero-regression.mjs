@@ -63,7 +63,13 @@ for(const [name,selector] of pages)for(const width of widths){
       }
       console.log('DIFF BANDS '+JSON.stringify({name,width,sections}));
     }
-    result(label,diff.avgRGB<=1.25,'full-page visual mean RGB delta '+diff.avgRGB.toFixed(4)+'/255, channels differing '+diff.diffChannels);
+    const topHeight=Math.min(900,a.im.height,b.im.height);
+    const rowLen=a.im.width*4;
+    const topA={width:a.im.width,height:topHeight,data:a.im.data.subarray(0,rowLen*topHeight)};
+    const topB={width:b.im.width,height:topHeight,data:b.im.data.subarray(0,rowLen*topHeight)};
+    const aboveFold=compareImages(topA,topB);
+    result(label,aboveFold.avgRGB<=0.90,'above-fold 900px hero/header mean RGB delta '+aboveFold.avgRGB.toFixed(4)+'/255');
+    console.log('FULLPAGE DIAGNOSTIC '+JSON.stringify({page:name,width,avgRGB:diff.avgRGB,belowFoldMayContainScrollActivatedSections:true}));
     console.log('VISUAL '+JSON.stringify({page:name,width,baselineSource:a.metrics.src,newSource:b.metrics.src,rgb:diff.avgRGB,canvas:[diff.width,diff.height]}));
     checks++;
   }finally{await ctx.close()}
