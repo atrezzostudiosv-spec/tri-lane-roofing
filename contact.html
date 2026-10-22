@@ -120,10 +120,11 @@
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 tl-tablet-contact-layout">
 <!-- Contact Form Section -->
 <div class="lg:col-span-7 bg-white p-8 sm:p-10 rounded-lg shadow-lg border border-stone-200 tl-tablet-contact-form">
-<h2 class="text-3xl font-bold mb-2">PREPARE YOUR INQUIRY</h2>
-<p class="text-stone-600 text-sm mb-3">Describe your roofing or exterior service need and prepare the details to share with Tri-Lane.</p>
-<p class="text-stone-600 text-xs leading-relaxed mb-8" id="contact-preview-notice"><strong>Website preview:</strong> this form does not send messages or store your information. After preparing your request, copy the details and continue to the official contact page or call Tri-Lane directly.</p>
+<h2 class="text-3xl font-bold mb-2">SEND A TEST INQUIRY</h2>
+<p class="text-stone-600 text-sm mb-3">Use this demo form to test message delivery before connecting the client's mailbox.</p>
+<p class="text-stone-600 text-xs leading-relaxed mb-8" id="contact-preview-notice"><strong>TEST MODE:</strong> submissions are processed by FormSubmit and sent to the Atrezzo Studios testing inbox (atrezzostudiosv@gmail.com), not directly to Tri-Lane. Please enter sample information only; do not submit sensitive personal details.</p>
 <form class="space-y-6" id="contact-form" aria-describedby="contact-preview-notice" onsubmit="handleContactSubmit(event)">
+<div class="absolute -left-[9999px]" aria-hidden="true"><label for="contact-honey">Leave blank</label><input id="contact-honey" name="_honey" type="text" tabindex="-1" autocomplete="off"/></div>
 <div>
 <label class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2" for="contact-name">Full Name *</label>
 <input class="w-full px-4 py-3 rounded border border-stone-300 bg-stone-50 focus:bg-white text-stone-900 focus:outline-none focus:border-brand-orange text-sm" id="contact-name" required="" type="text"/>
@@ -167,7 +168,7 @@
 <textarea class="w-full px-4 py-3 rounded border border-stone-300 bg-stone-50 focus:bg-white text-stone-900 focus:outline-none focus:border-brand-orange text-sm" id="contact-message" required="" rows="4"></textarea>
 </div>
 <button class="w-full bg-brand-orange hover:bg-orange-600 text-white font-display text-xl py-4 rounded shadow transition-all font-bold tracking-wider" type="submit">
-                                    PREPARE INQUIRY
+                                    SEND TEST INQUIRY
                                 </button>
 <div class="p-4 rounded text-sm hidden" id="form-status-msg"></div>
 </form>
@@ -204,7 +205,7 @@
 <div class="bg-white p-6 rounded-lg border border-stone-200">
 <h4 class="font-bold text-brand-charcoal mb-2"><i class="fa-solid fa-circle-info text-brand-orange mr-2"></i> Note on Inquiries</h4>
 <p class="text-stone-600 text-xs leading-relaxed">
-                                    This website is a demonstration. Its forms do not deliver requests to Tri-Lane. For inquiries or scheduling, use the official contact page or call one of the published office numbers.
+                                    During testing, form details go to Atrezzo Studios via FormSubmit, not to Tri-Lane. Actual client routing and privacy notices require approval before launch. For real inquiries, use Tri-Lane's official contact page or phone numbers.
                                 </p>
 </div>
 </div>
