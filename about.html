@@ -172,7 +172,7 @@
 #at-about-v1 .at-about-values .at-about-value-number,
 #at-about-v1 .at-about-diff-item.is-active .at-about-diff-index {color:#9B4700;}
 #at-about-v1 .at-about-cta {color:#171B1E;}
-</style></head><body class="flex flex-col min-h-screen antialiased" data-page="about"><div class="bg-brand-charcoal text-white text-xs py-2 px-4 border-b border-brand-slate/40 text-center sm:text-left">
+</style><link rel="stylesheet" href="assets/css/accessibility.css?v=1"/></head><body class="flex flex-col min-h-screen antialiased" data-page="about"><div class="bg-brand-charcoal text-white text-xs py-2 px-4 border-b border-brand-slate/40 text-center sm:text-left">
 <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
 <div class="flex items-center space-x-2">
 <span class="inline-block w-2 h-2 rounded-full bg-brand-orange animate-pulse"></span>
@@ -465,7 +465,7 @@
                         </label>
 </div>
 <div>
-<label class="block text-xs font-bold uppercase mb-1">Additional Notes</label>
+<label class="block text-xs font-bold uppercase mb-1" for="wiz-notes">Additional Notes</label>
 <textarea class="w-full border p-2 rounded text-sm" id="wiz-notes" placeholder="Briefly describe what you are seeing or needing..." rows="3"></textarea>
 </div>
 </div>
@@ -473,11 +473,11 @@
 <div class="wizard-step hidden space-y-4" id="wizard-step-3">
 <p class="text-sm text-stone-600">Provide your property location so our team can verify local availability:</p>
 <div>
-<label class="block text-xs font-bold uppercase mb-1">City *</label>
+<label class="block text-xs font-bold uppercase mb-1" for="wiz-city">City *</label>
 <input class="w-full border p-3 rounded text-sm" id="wiz-city" required="" type="text"/>
 </div>
 <div>
-<label class="block text-xs font-bold uppercase mb-1">ZIP Code *</label>
+<label class="block text-xs font-bold uppercase mb-1" for="wiz-zip">ZIP Code *</label>
 <input class="w-full border p-3 rounded text-sm" id="wiz-zip" required="" type="text"/>
 </div>
 </div>
@@ -490,11 +490,11 @@
 <p><strong>Location:</strong> <span id="sum-location"></span></p>
 </div>
 <div>
-<label class="block text-xs font-bold uppercase mb-1">Full Name *</label>
+<label class="block text-xs font-bold uppercase mb-1" for="wiz-name">Full Name *</label>
 <input class="w-full border p-3 rounded text-sm" id="wiz-name" required="" type="text"/>
 </div>
 <div>
-<label class="block text-xs font-bold uppercase mb-1">Phone or Email *</label>
+<label class="block text-xs font-bold uppercase mb-1" for="wiz-contact">Phone or Email *</label>
 <input class="w-full border p-3 rounded text-sm" id="wiz-contact" placeholder="Phone number or email address" required="" type="text"/>
 </div>
 <div class="p-3 rounded text-xs hidden" id="wiz-status"></div>
