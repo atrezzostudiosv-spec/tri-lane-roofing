@@ -42,3 +42,8 @@ header nav a[aria-current="page"] {
 body[data-page="home"] .tl-featured-disclaimer {
   color: #5F5F5C;
 }
+
+/* Contact office card is charcoal inside a light section: keep orange legible there. */
+body[data-page="contact"] main .bg-brand-charcoal .text-brand-orange {
+  color: #FFBA7A;
+}
