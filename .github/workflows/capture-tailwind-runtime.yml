@@ -1,0 +1,54 @@
+name: Temporary capture exact Tailwind runtime CSS
+
+on:
+  push:
+    branches: [optimization-tailwind-static-runtime-20261022]
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.56.1
+      - name: Capture browser-generated stylesheet per page
+        run: |
+          python3 -m http.server 8766 --bind 127.0.0.1 --directory . >/tmp/tailwind-capture.log 2>&1 &
+          sleep 2
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox']});
+          try{
+            const files=[['index.html','home'],['about.html','about'],['services.html','services'],['gallery.html','gallery'],['contact.html','contact']];
+            for(const [html,name] of files){
+              const page=await browser.newPage({viewport:{width:1440,height:900},reducedMotion:'reduce'});
+              await page.goto('http://127.0.0.1:8766/'+html,{waitUntil:'load',timeout:45000});
+              await page.evaluate(()=>document.fonts.ready);
+              await page.waitForTimeout(700);
+              const css=await page.evaluate(()=>{
+                const nodes=[...document.querySelectorAll('style')];
+                const output=nodes.find(el=>el.textContent.length>14000&&el.textContent.includes('--tw-border-spacing-x'));
+                return output?.textContent||'';
+              });
+              if(css.length<14000 || !css.includes('--tw-'))throw Error('Missing Tailwind runtime CSS on '+html);
+              const out='assets/css/tailwind-runtime-'+name+'.css';
+              fs.writeFileSync(out,css,'utf8');
+              console.log('CAPTURED '+html+' -> '+out+': '+css.length+' bytes');
+              await page.close();
+            }
+          }finally{await browser.close();}
+          JS
+      - name: Commit extracted CSS exclusively in test branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/css/tailwind-runtime-*.css
+          git commit -m "Capture exact per-page Tailwind runtime CSS output"
+          git push origin HEAD:optimization-tailwind-static-runtime-20261022
