@@ -1,0 +1,95 @@
+name: Live final smoke and interior Lighthouse
+
+on:
+  push:
+    branches: [audit-live-final-20261022]
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Wait until GitHub Pages has exact accessibility update
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            if curl --connect-timeout 12 --max-time 35 -fsSL "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/contact.html" -o /tmp/tl-live-contact.html &&
+               grep -q 'assets/css/accessibility.css' /tmp/tl-live-contact.html &&
+               grep -q 'for="wiz-city"' /tmp/tl-live-contact.html &&
+               curl --connect-timeout 12 --max-time 35 -fsSL "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/assets/css/accessibility.css?v=1" -o /tmp/tl-accessibility.css &&
+               grep -q 'Contact office card' /tmp/tl-accessibility.css; then
+                echo "LIVE DEPLOY READY: exact accessible contact markup and CSS";
+                exit 0
+            fi
+            echo "Deployment not yet verified attempt $i"
+            sleep 10
+          done
+          echo "::error::Exact site release not yet visible"
+          exit 1
+      - name: Install browser smoke testing tools
+        run: npm install --no-save playwright@1.56.1 @axe-core/playwright@4.10.2
+      - name: Test all five public pages, 4 widths, real interactive states and mocked form
+        run: node qa/live-final-smoke.mjs
+  performance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Wait for updated published release
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 30); do
+            if curl --connect-timeout 12 --max-time 35 -fsSL "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/about.html" -o /tmp/tl-live-about.html &&
+               grep -q 'assets/css/accessibility.css' /tmp/tl-live-about.html &&
+               grep -q 'imagesrcset=' /tmp/tl-live-about.html; then exit 0; fi
+            sleep 10
+          done
+          echo "::error::Updated public About not visible"
+          exit 1
+      - name: Install reproducible Lighthouse runner
+        run: npm install --no-save lighthouse@12.8.2
+      - name: Measure 4 interior pages on actual published demo
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          set -euo pipefail
+          mkdir -p qa-reports
+          for PAGE in about services gallery contact; do
+            for MODE in mobile desktop; do
+              if [ "$MODE" = mobile ]; then ARG="--form-factor=mobile"; else ARG="--preset=desktop"; fi
+              npx lighthouse "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/${PAGE}.html" "$ARG" --only-categories=performance --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --output=json --output-path="qa-reports/${PAGE}-${MODE}.json" --quiet
+            done
+          done
+      - name: Summarize Lighthouse laboratory results
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          for(const page of ['about','services','gallery','contact'])for(const mode of ['mobile','desktop']){
+            const report=JSON.parse(fs.readFileSync('qa-reports/'+page+'-'+mode+'.json','utf8'));
+            const a=report.audits;
+            console.log('FINAL RELEASE LIGHTHOUSE '+JSON.stringify({
+              page, mode, score:Math.round(report.categories.performance.score*100),
+              fcpMs:Math.round(a['first-contentful-paint'].numericValue),
+              lcpMs:Math.round(a['largest-contentful-paint'].numericValue),
+              tbtMs:Math.round(a['total-blocking-time'].numericValue),
+              cls:Number(a['cumulative-layout-shift'].numericValue.toFixed(3)),
+              opportunities:Object.values(a).filter(x=>x.details?.type==='opportunity'&&x.details.overallSavingsMs>0).sort((x,y)=>y.details.overallSavingsMs-x.details.overallSavingsMs).slice(0,3).map(x=>({id:x.id,savingsMs:Math.round(x.details.overallSavingsMs)}))
+            }));
+          }
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tri-lane-live-final-lighthouse-20261022
+          path: qa-reports/
+          if-no-files-found: ignore
