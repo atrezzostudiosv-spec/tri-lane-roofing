@@ -157,14 +157,17 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
         });
 
         /* ==================== 4. CONTACT FORM VALIDATION ==================== */
-        /* Preview-safe contact handoff: NO BACKEND IS CONFIGURED.
-         * Never mark a request delivered, transmit personal information,
-         * or interpolate user text into innerHTML.
+        /* DEMO EMAIL TESTING (temporary): FormSubmit AJAX delivers to
+         * Atrezzo's test mailbox only after destination activation.
+         * Replace/approve the recipient and test again before client launch.
          */
         const TRILANE_OFFICIAL_CONTACT = 'https://trilaneroofing.com/contact';
         const TRILANE_DFW_TEL = 'tel:8177173997';
+        const TRILANE_FORM_TEST_EMAIL = 'atrezzostudiosv@gmail.com';
+        const TRILANE_FORM_ENDPOINT = 'https://formsubmit.co/ajax/' + TRILANE_FORM_TEST_EMAIL;
+        let triLaneFormPending = false;
 
-        function prepareLocalInquiry(statusElement, pairs) {
+        function prepareLocalInquiry(statusElement, pairs, explanationText) {
             const summary = pairs
                 .filter(pair => pair[1] && String(pair[1]).trim())
                 .map(pair => pair[0] + ': ' + String(pair[1]).trim())
@@ -176,12 +179,12 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
 
             const heading = document.createElement('p');
             heading.className = 'font-bold mb-2 text-brand-charcoal';
-            heading.textContent = 'Your inquiry is prepared — NOT sent.';
+            heading.textContent = 'Delivery could not be confirmed.';
             statusElement.appendChild(heading);
 
             const explanation = document.createElement('p');
             explanation.className = 'text-sm leading-relaxed mb-3';
-            explanation.textContent = 'This website preview has no message-delivery service. No details were sent or saved. Copy your request and use Tri-Lane’s official contact page, or call the DFW office.';
+            explanation.textContent = explanationText || 'The test service could not confirm delivery. Copy your request and use the official Tri-Lane contact page or call the office. Do not assume your message arrived.';
             statusElement.appendChild(explanation);
 
             const draft = document.createElement('textarea');
@@ -229,7 +232,85 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             statusElement.classList.remove('hidden');
         }
 
-        function handleContactSubmit(e) {
+
+        function setTriLaneFeedback(statusElement, type, title, description) {
+            statusElement.replaceChildren();
+            statusElement.className = type === 'success'
+                ? 'p-4 rounded text-sm bg-green-50 border border-green-300 text-green-900 mt-4'
+                : 'p-4 rounded text-sm bg-amber-50 border border-amber-300 text-amber-900 mt-4';
+            statusElement.setAttribute('role','status');
+            statusElement.setAttribute('aria-live','polite');
+            const headline = document.createElement('strong');
+            headline.className = 'block mb-2';
+            headline.textContent = title;
+            const detail = document.createElement('p');
+            detail.textContent = description;
+            statusElement.append(headline, detail);
+            statusElement.classList.remove('hidden');
+        }
+
+        /* "success" can be the STRING "false" in FormSubmit responses.
+         * Never treat a 200 HTTP status or a non-empty string as delivered.
+         */
+        async function sendTriLaneTestInquiry(statusElement, fields, summaryFields, button) {
+            if (triLaneFormPending) return;
+            triLaneFormPending = true;
+            const originalLabel = button ? button.textContent : '';
+            if (button) {
+                button.disabled = true;
+                button.setAttribute('aria-busy', 'true');
+                button.textContent = 'SENDING TEST…';
+            }
+
+            setTriLaneFeedback(statusElement, 'pending', 'Sending test request…',
+                'Submitting sample details to FormSubmit for delivery to the Atrezzo Studios test inbox. Do not close the page yet.');
+
+            try {
+                const payload = Object.assign({
+                    _subject: 'Tri-Lane Website DEMO — Test Inquiry',
+                    _url: window.location.href,
+                    _honey: ''
+                }, fields);
+
+                const response = await fetch(TRILANE_FORM_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (response.ok && (result.success === true || result.success === 'true')) {
+                    setTriLaneFeedback(statusElement, 'success',
+                        'Test request accepted by the form service.',
+                        'Check ' + TRILANE_FORM_TEST_EMAIL +
+                        ' (including Spam) to verify that the email arrived. Acceptance does not prove inbox delivery.');
+                    return;
+                }
+
+                const providerMessage = String(result && result.message || '');
+                const activationNeeded = /activat|confirm.*email/i.test(providerMessage);
+                const reason = activationNeeded
+                    ? 'FormSubmit needs the recipient to confirm its activation email at ' +
+                      TRILANE_FORM_TEST_EMAIL +
+                      ' before delivery can be verified. Check Spam too. The test request is not confirmed delivered.'
+                    : 'FormSubmit did not accept the test request. No email delivery has been confirmed. You can copy your details and use Tri-Lane’s official contact channels.';
+                prepareLocalInquiry(statusElement, summaryFields, reason);
+            } catch (error) {
+                prepareLocalInquiry(statusElement, summaryFields,
+                    'The test submission could not be completed or verified. You can copy your details and contact Tri-Lane directly. Please do not assume the email arrived.');
+            } finally {
+                triLaneFormPending = false;
+                if (button) {
+                    button.disabled = false;
+                    button.removeAttribute('aria-busy');
+                    button.textContent = originalLabel;
+                }
+            }
+        }
+
+        async function handleContactSubmit(e) {
             e.preventDefault();
 
             const name = document.getElementById('contact-name').value.trim();
@@ -253,10 +334,16 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
                 statusMsg.setAttribute('aria-live','polite');
                 return;
             }
-            prepareLocalInquiry(statusMsg, [
+            if (document.getElementById('contact-honey')?.value) return;
+            const summary = [
                 ['Name',name], ['Phone',phone], ['Email',email], ['City or ZIP',city],
                 ['Service',service], ['Project details',message]
-            ]);
+            ];
+            const submitButton = document.querySelector('#contact-form button[type="submit"]');
+            await sendTriLaneTestInquiry(statusMsg, {
+                name, phone, email, city_or_zip: city, service, message,
+                form_type: 'Contact page'
+            }, summary, submitButton);
         }
 
         /* ==================== 5. MULTISTEP WIZARD ASSISTANT ==================== */
@@ -271,7 +358,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
                 const notice = document.createElement('p');
                 notice.id = 'wizard-preview-notice';
                 notice.className = 'text-xs leading-relaxed text-stone-600 mb-4';
-                notice.textContent = 'Demo preview: this assistant does not send or store requests. You can prepare the details, then copy them or contact Tri-Lane through its official channels.';
+                notice.textContent = 'TEST MODE: this assistant sends the information you enter through FormSubmit to Atrezzo Studios (' + TRILANE_FORM_TEST_EMAIL + '), not to Tri-Lane. Use sample information only; avoid sensitive personal data.';
                 wizardForm.prepend(notice);
             }
             const wizardStatus = document.getElementById('wiz-status');
@@ -353,7 +440,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             } else {
                 prevBtn.classList.remove('hidden');
                 nextBtn.classList.remove('hidden');
-                nextBtn.innerText = currentWizStep === 4 ? "Review Options" : "Continue";
+                nextBtn.innerText = currentWizStep === 4 ? "SEND TEST" : "Continue";
             }
 
             // Populate Summary on Step 4
@@ -365,28 +452,43 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             }
         }
 
-        function submitWizardInquiry() {
+        async function submitWizardInquiry() {
             const name = document.getElementById('wiz-name').value.trim();
             const contact = document.getElementById('wiz-contact').value.trim();
             const status = document.getElementById('wiz-status');
 
             if (!name || !contact) {
+                status.replaceChildren();
                 status.className = 'p-3 rounded text-xs bg-amber-50 border border-amber-300 text-amber-900 mt-2';
-                status.textContent = 'Enter your name and a phone number or email to prepare the inquiry. Nothing has been sent.';
-                status.setAttribute('aria-live','polite');
+                status.textContent = 'Enter your name and a phone number or email. Nothing has been sent.';
+                status.setAttribute('aria-live', 'polite');
                 return;
             }
+            if (document.getElementById('wizard-honey')?.value) return;
 
             const type = document.querySelector('input[name="wiz-type"]:checked');
-            prepareLocalInquiry(status, [
-                ['Name', name],
-                ['Phone or email',contact],
-                ['Service',selectedService || 'Not sure yet'],
-                ['Inquiry type',type ? type.value : 'General question'],
-                ['Additional notes',document.getElementById('wiz-notes').value.trim()],
-                ['City',document.getElementById('wiz-city').value.trim()],
-                ['ZIP Code',document.getElementById('wiz-zip').value.trim()]
-            ]);
+            const inquiryType = type ? type.value : 'General question';
+            const notes = document.getElementById('wiz-notes').value.trim();
+            const city = document.getElementById('wiz-city').value.trim();
+            const zip = document.getElementById('wiz-zip').value.trim();
+            const service = selectedService || 'Not sure yet';
+            const summary = [
+                ['Name',name],['Contact',contact],['Service',service],
+                ['Inquiry type',inquiryType],['Additional notes',notes],
+                ['City',city],['ZIP Code',zip]
+            ];
+            const email = contact.includes('@') ? contact : '';
+            const phone = email ? '' : contact;
+            const message = [
+                'Service: ' + service, 'Inquiry type: ' + inquiryType,
+                'Notes: ' + notes, 'City: ' + city, 'ZIP: ' + zip
+            ].join('\n');
+
+            await sendTriLaneTestInquiry(status, {
+                name, email, phone, city, zip,
+                service, inquiry_type: inquiryType, message,
+                form_type: 'Project inquiry assistant'
+            }, summary, document.getElementById('wiz-next-btn'));
         }
 
 
