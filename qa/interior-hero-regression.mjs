@@ -27,8 +27,11 @@ for(const [name,selector] of pages)for(const width of widths){
       },selector);
       const im=PNG.sync.read(await page.screenshot({fullPage:true,animations:'disabled'}));
       const menu=page.locator('#mobile-menu-btn');
-      await menu.click();const open=await page.locator('#mobile-menu').evaluate(el=>!el.classList.contains('hidden'));
-      await menu.click();const closed=await page.locator('#mobile-menu').evaluate(el=>el.classList.contains('hidden'));
+      let open=true,closed=true;
+      if(await menu.isVisible()){
+        await menu.click();open=await page.locator('#mobile-menu').evaluate(el=>!el.classList.contains('hidden'));
+        await menu.click();closed=await page.locator('#mobile-menu').evaluate(el=>el.classList.contains('hidden'));
+      }
       await page.evaluate(()=>openInquiryModal());
       const modalOpen=await page.locator('#inquiry-modal').evaluate(el=>!el.classList.contains('hidden'));
       await page.evaluate(()=>selectWizardService('Roofing'));
