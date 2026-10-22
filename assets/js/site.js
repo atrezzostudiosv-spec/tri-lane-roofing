@@ -353,7 +353,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             } else {
                 prevBtn.classList.remove('hidden');
                 nextBtn.classList.remove('hidden');
-                nextBtn.innerText = currentWizStep === 4 ? "Prepare Contact Options" : "Continue";
+                nextBtn.innerText = currentWizStep === 4 ? "Review Options" : "Continue";
             }
 
             // Populate Summary on Step 4
