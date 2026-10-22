@@ -187,7 +187,13 @@
  .tl-process-card p{font-size:12.5px;line-height:1.7}
 }
 @media(prefers-reduced-motion:reduce){.tl-process-circle,.tl-process-card{transition:none}.tl-process-step.is-active .tl-process-circle{transform:none}}
-</style><link rel="stylesheet" href="assets/css/tailwind-runtime-services.css"/></head><body class="flex flex-col min-h-screen antialiased" data-page="services"><div class="bg-brand-charcoal text-white text-xs py-2 px-4 border-b border-brand-slate/40 text-center sm:text-left">
+</style><link rel="stylesheet" href="assets/css/tailwind-runtime-services.css"/><style id="atrezzo-accessible-contrast">
+/* ATREZZO WCAG: darken small text on pale surfaces, not the brand accent itself. */
+#tl-sv-top .sv-roofing .sv-eyebrow,
+#tl-sv-top .sv-exteriors .sv-eyebrow,
+body[data-page="services"] .bg-white .text-brand-orange {color:#9B4700;}
+#tl-sv-top .sv-primary {color:#171B1E;}
+</style></head><body class="flex flex-col min-h-screen antialiased" data-page="services"><div class="bg-brand-charcoal text-white text-xs py-2 px-4 border-b border-brand-slate/40 text-center sm:text-left">
 <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
 <div class="flex items-center space-x-2">
 <span class="inline-block w-2 h-2 rounded-full bg-brand-orange animate-pulse"></span>
