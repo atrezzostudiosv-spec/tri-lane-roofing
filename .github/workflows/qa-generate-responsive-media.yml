@@ -1,0 +1,49 @@
+name: Temporary responsive media generation
+
+on:
+  push:
+    branches: [optimization-responsive-media-20261022]
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install image encoder
+        run: python3 -m pip install --quiet pillow
+      - name: Generate same-photo responsive formats and quantify fidelity
+        run: |
+          python3 - <<'PY'
+          from PIL import Image, ImageChops, ImageStat
+          import os,math
+          sets=[
+              ('assets/images/home-hero.webp',[640,960,1280]),
+              ('assets/images/home-intro.webp',[480,800])]
+          for src,widths in sets:
+              image=Image.open(src).convert('RGB')
+              print(f'ORIGINAL {src}: {image.size}, {os.path.getsize(src)} bytes',flush=True)
+              for width in widths:
+                  height=round(image.height*width/image.width)
+                  resized=image.resize((width,height),Image.Resampling.LANCZOS)
+                  outfile=src.replace('.webp',f'-{width}.webp')
+                  resized.save(outfile,'WEBP',quality=90,method=6)
+                  decoded=Image.open(outfile).convert('RGB')
+                  assert decoded.size==(width,height)
+                  diff=ImageChops.difference(resized,decoded)
+                  rms=ImageStat.Stat(diff).rms
+                  mse=sum(x*x for x in rms)/3
+                  psnr=10*math.log10(255*255/mse) if mse else 100
+                  assert psnr >= 36, f'Excessive compression difference: {outfile} {psnr:.1f} dB'
+                  print(f'CREATED {outfile}: {width}x{height}, {os.path.getsize(outfile)} bytes, PSNR {psnr:.2f}dB versus original scaled image',flush=True)
+          PY
+      - name: Save variant assets to isolated optimization branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/images/home-hero-*.webp assets/images/home-intro-*.webp
+          git commit -m "Add inspected high-fidelity responsive versions of existing hero photos"
+          git push origin HEAD:optimization-responsive-media-20261022
