@@ -1,0 +1,77 @@
+name: Gallery post-image live performance benchmark
+on:
+  push:
+    branches: [audit-gallery-after-images-20261022]
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm published Gallery includes optimized hero and original resolution data
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            if curl -L -fsS --connect-timeout 12 --max-time 35 "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/gallery.html" -o /tmp/gallery-live.html &&
+               grep -q 'gallery-hero-800.webp' /tmp/gallery-live.html &&
+               grep -q 'data-full-src=' /tmp/gallery-live.html &&
+               grep -q 'big.src=cover.dataset.fullSrc' /tmp/gallery-live.html; then
+              echo "Published Gallery release verified"
+              exit 0
+            fi
+            echo "Waiting for published Gallery release (attempt $attempt)"
+            sleep 10
+          done
+          echo "::error::Gallery release not current"
+          exit 1
+      - name: Install Lighthouse CLI
+        run: npm install --no-save lighthouse@12.8.2
+      - name: Three independent mobile Lighthouse measurements
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          set -euo pipefail
+          mkdir -p audit/gallery
+          for i in 1 2 3; do
+            npx lighthouse https://atrezzostudiosv-spec.github.io/tri-lane-roofing/gallery.html --form-factor=mobile --only-categories=performance --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --output=json --output-path="audit/gallery/mobile-$i.json" --quiet
+          done
+      - name: One desktop Lighthouse measurement
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          npx lighthouse https://atrezzostudiosv-spec.github.io/tri-lane-roofing/gallery.html --preset=desktop --only-categories=performance --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --output=json --output-path=audit/gallery/desktop.json --quiet
+      - name: Summary with median and exact audited LCP element
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const files=['mobile-1.json','mobile-2.json','mobile-3.json','desktop.json'];
+          const stats=files.map(f=>{
+            const x=JSON.parse(fs.readFileSync('audit/gallery/'+f,'utf8'));
+            const a=x.audits;
+            const lcp=a['largest-contentful-paint-element']?.details?.items?.[0]?.items?.[0]?.node?.selector||null;
+            const resources=a['network-requests']?.details?.items||[];
+            const hero=resources.find(z=>z.url?.includes('/assets/images/gallery-hero-'));
+            return {run:f,performance:Math.round(x.categories.performance.score*100),
+             fcpMs:Math.round(a['first-contentful-paint'].numericValue),
+             lcpMs:Math.round(a['largest-contentful-paint'].numericValue),
+             tbtMs:Math.round(a['total-blocking-time'].numericValue),
+             cls:Number(a['cumulative-layout-shift'].numericValue.toFixed(4)),
+             lcpElement:lcp,heroTransferBytes:hero?.transferSize||null,
+             opportunities:Object.values(a).filter(z=>z.details?.type==='opportunity'&&z.details.overallSavingsMs>0).sort((q,w)=>w.details.overallSavingsMs-q.details.overallSavingsMs).slice(0,3).map(z=>({id:z.id,savingsMs:Math.round(z.details.overallSavingsMs)}))
+            };
+          });
+          stats.forEach(v=>console.log('FINAL GALLERY MEASUREMENT '+JSON.stringify(v)));
+          const median=key=>stats.slice(0,3).map(a=>a[key]).sort((a,b)=>a-b)[1];
+          console.log('FINAL GALLERY MOBILE MEDIAN '+JSON.stringify({performance:median('performance'),fcpMs:median('fcpMs'),lcpMs:median('lcpMs'),tbtMs:median('tbtMs'),cls:median('cls')}));
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tri-lane-gallery-after-images-20261022
+          path: audit/gallery/
+          if-no-files-found: ignore
