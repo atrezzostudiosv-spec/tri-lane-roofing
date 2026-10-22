@@ -46,6 +46,18 @@ Evidence: https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/
 - Earlier Gallery baseline single mobile run: 67/100, LCP 10.77 s. This is a directional *lab* comparison rather than proof of an in-field improvement.
 - Re-run evidence: https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/39822528051
 
+## About and Services hero mobile performance — verified 2026-10-23
+
+- Implementation: [PR #19](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/pull/19), published successfully via [GitHub Pages](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/39871798636).
+- Reencoded existing approved *same-source illustration* into three size-matched WebP copies for **About and Services only**. Original desktop 1672w photo remains intact. No CSS, JavaScript, font or icon resources were modified.
+- 640px hero: 352,338 → 117,406 bytes (−66.7%); 960px: 773,278 → 247,468 (−68.0%); 1280px: 1,348,252 → 420,352 (−68.8%).
+- [Responsive visual/functional test](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/39871467621): **8/8** viewport groups passed at 375/768/1024/1440px on both pages, unchanged calculated typography, icons, colors, layout geometry, navigation, responsive overflow, noindex, and wizard interactions; above-fold image compression caused only a small expected photographic RGB difference. Original image is still used at 1440px.
+- [Live Lighthouse post-release](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/39871866319): three mobile lab tests per page, one desktop:
+  - About mobile scores **72 / 68 / 89; median 72/100**; LCP **5.492 / 5.673 / 3.695s, median 5.492s**; desktop single run 83/100.
+  - Services mobile scores **78 / 75 / 75; median 75/100**; LCP **5.601 / 5.821 / 5.801s, median 5.801s**; desktop single run 83/100.
+- Prior single-run mobile snapshot: About 67/100, LCP 7.973s; Services 70/100, LCP 9.189s. Comparing a single older run with a new 3-run median is **directional evidence only**, not an isolated A/B benchmark or actual user experience.
+- Both pages still exceed the generally recommended mobile LCP target of 2.5s; additional optimizations must preserve approved typography, icons, colors, animation and design. Avoid removing render-critical stylesheets after Gallery visual parity regression failed.
+
 ## Status and next prioritized actions
 
 | Area | Status | Remaining work |
@@ -55,7 +67,7 @@ Evidence: https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/
 | Form validation and client-side mocked delivery | VERIFIED | Replace Atrezzo staging inbox only after client approves and activates their destination; re-test actual delivery |
 | Responsive image selection | VERIFIED | Gallery hero and seven tiles optimized with responsive WebPs; full-size originals preserved in lightbox; continue evaluating other pages |
 | Gallery mobile performance | IMPROVED, FURTHER WORK RECOMMENDED | Mobile 3-run Lighthouse median 79/100, LCP 4.718 s; remaining render-blocking CSS/fonts and large images merit isolated testing |
-| About/Services mobile performance | NEEDS OPTIMIZATION | LCP ~7.97/9.19 s; repeat Lighthouse trials after localized performance improvements |
+| About/Services mobile performance | IMPROVED; FURTHER WORK RECOMMENDED | Post-hero mobile lab medians: About 72/100, LCP 5.492s; Services 75/100, LCP 5.801s. Do not change typography, icons or visual design |
 | Contact delivery to client inbox | NOT VERIFIED | Atrezzo staging inbox is temporary; do not imply messages reach Tri-Lane |
 | Business data, contact and claims | SOURCE-BOUNDED | Obtain final client sign-off on copy, phone destinations, image rights, attributed reviews, and operational procedures |
 | SEO indexing / domain publication | NOT APPROVED | Demo remains `noindex`; do not publish as official business site without client approval |
