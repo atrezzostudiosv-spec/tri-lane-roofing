@@ -1,0 +1,76 @@
+name: Temporary four-page final quality audit
+
+on:
+  push:
+    branches: [audit-final-quality-20261022]
+
+permissions:
+  contents: read
+
+jobs:
+  functional-accessibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Chrome automation and accessibility audit
+        run: npm install --no-save playwright@1.56.1 @axe-core/playwright@4.10.2
+      - name: Inspect all internal pages in 4 viewports and mock form transport
+        run: |
+          python3 -m http.server 8766 --bind 127.0.0.1 --directory . > /tmp/tri-lane-audit.log 2>&1 &
+          sleep 2
+          node qa/final-site-audit.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tri-lane-interior-qa-20261022
+          path: qa-results/
+          if-no-files-found: ignore
+  lighthouse-interior:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Lighthouse
+        run: npm install --no-save lighthouse@12.8.2
+      - name: Measure published About / Services / Gallery / Contact mobile and desktop
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          set -euo pipefail
+          mkdir -p qa-results/lighthouse
+          for PAGE in about services gallery contact; do
+            for MODE in mobile desktop; do
+              OPTIONS="--form-factor=mobile"
+              if [ "$MODE" = desktop ]; then OPTIONS="--preset=desktop"; fi
+              npx lighthouse "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/${PAGE}.html" $OPTIONS --only-categories=performance --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --output=json --output-path="qa-results/lighthouse/${PAGE}-${MODE}.json" --quiet
+            done
+          done
+      - name: Summarize benchmark results
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          for(const page of ['about','services','gallery','contact'])for(const mode of ['mobile','desktop']){
+            const r=JSON.parse(fs.readFileSync('qa-results/lighthouse/'+page+'-'+mode+'.json','utf8'));
+            console.log('INTERIOR BENCHMARK '+JSON.stringify({
+              page,mode,score:Math.round(r.categories.performance.score*100),
+              FCP:Math.round(r.audits['first-contentful-paint'].numericValue),
+              LCP:Math.round(r.audits['largest-contentful-paint'].numericValue),
+              TBT:Math.round(r.audits['total-blocking-time'].numericValue),
+              CLS:r.audits['cumulative-layout-shift'].numericValue,
+              topOpportunities:Object.values(r.audits).filter(a=>a.details?.type==='opportunity'&&a.details.overallSavingsMs>0).sort((a,b)=>b.details.overallSavingsMs-a.details.overallSavingsMs).slice(0,3).map(a=>({id:a.id,savedMs:Math.round(a.details.overallSavingsMs)}))
+            }));
+          }
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tri-lane-interior-lighthouse-20261022
+          path: qa-results/lighthouse/
+          if-no-files-found: ignore
