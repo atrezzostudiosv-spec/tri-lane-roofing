@@ -1,4 +1,4 @@
-name: Temporary Lighthouse live site audit
+name: Post-responsive-image Lighthouse audit
 
 on:
   push:
@@ -25,7 +25,8 @@ jobs:
           for i in $(seq 1 24); do
             if curl -L -fsS --connect-timeout 15 --max-time 40 "$URL" -o /tmp/tri-lane-home.html &&
                grep -q 'fetchpriority="high"' /tmp/tri-lane-home.html &&
-               grep -q 'rel="preload" as="image"' /tmp/tri-lane-home.html; then
+               grep -q 'rel="preload" as="image"' /tmp/tri-lane-home.html &&
+               grep -q 'home-hero-640.webp 640w' /tmp/tri-lane-home.html; then
               echo "Published production demo includes the approved hero preload."
               exit 0
             fi
@@ -67,6 +68,6 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: tri-lane-lighthouse-20261022
+          name: tri-lane-lighthouse-post-responsive-20261022
           path: /tmp/tri-lane-*.json
           if-no-files-found: ignore
