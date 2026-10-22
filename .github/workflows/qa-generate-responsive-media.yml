@@ -30,7 +30,7 @@ jobs:
                   height=round(image.height*width/image.width)
                   resized=image.resize((width,height),Image.Resampling.LANCZOS)
                   outfile=src.replace('.webp',f'-{width}.webp')
-                  resized.save(outfile,'WEBP',quality=90,method=6)
+                  resized.save(outfile,'WEBP',lossless=True,method=6)
                   decoded=Image.open(outfile).convert('RGB')
                   assert decoded.size==(width,height)
                   diff=ImageChops.difference(resized,decoded)
