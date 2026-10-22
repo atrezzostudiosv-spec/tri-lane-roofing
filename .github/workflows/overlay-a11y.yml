@@ -1,0 +1,21 @@
+name: Temporary overlay accessibility audit
+on:
+  push:
+    branches: [audit-final-quality-20261022]
+permissions:
+  contents: read
+jobs:
+  overlay:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.56.1 @axe-core/playwright@4.10.2
+      - name: Test visible wizard steps and image viewer for WCAG issues
+        run: |
+          python3 -m http.server 8766 --bind 127.0.0.1 --directory . >/tmp/overlay.log 2>&1 &
+          sleep 2
+          node qa/overlay-a11y.mjs
