@@ -85,6 +85,21 @@ function compare(base,updated,label){
        await p.locator('#at-gallery-viewer:not([hidden])').waitFor();
        await p.waitForFunction(()=>document.getElementById('at-gallery-viewer-img').naturalWidth===1053,null,{timeout:15000});
        assert.equal(await p.locator('#at-gallery-project-thumbs button').count(),4);
+       // Verify thumbnails, previous/next controls, and horizontal touch swipe.
+       await p.locator('#at-gallery-project-thumbs button').nth(1).click();
+       assert.match(await p.locator('#at-gallery-viewer-progress').innerText(),/IMAGE 02/);
+       await p.locator('#at-gallery-viewer .at-gallery-viewer-next').click();
+       assert.match(await p.locator('#at-gallery-viewer-progress').innerText(),/IMAGE 03/);
+       await p.locator('#at-gallery-viewer .at-gallery-viewer-previous').click();
+       assert.match(await p.locator('#at-gallery-viewer-progress').innerText(),/IMAGE 02/);
+       await p.evaluate(()=>{
+         const v=document.getElementById('at-gallery-viewer');
+         const begin=new Touch({identifier:1,target:v,clientX:320,clientY:320});
+         const end=new Touch({identifier:1,target:v,clientX:100,clientY:320});
+         v.dispatchEvent(new TouchEvent('touchstart',{touches:[begin],bubbles:true}));
+         v.dispatchEvent(new TouchEvent('touchend',{changedTouches:[end],bubbles:true}));
+       });
+       assert.match(await p.locator('#at-gallery-viewer-progress').innerText(),/IMAGE 03/);
        await p.screenshot({path:path.join(out,'viewer-'+width+'.png')});
        await p.keyboard.press('Escape');
        assert.ok(await p.locator('#at-gallery-viewer').getAttribute('hidden')!==null,'viewer failed to close');
@@ -92,6 +107,23 @@ function compare(base,updated,label){
        console.log('PASS gallery viewer '+width);
      }catch(e){failures.push('gallery viewer '+width+': '+e.message);console.error('FAIL',failures.at(-1));}
      finally{await context.close();}
+   }
+   // Services: on touch/mobile, next arrow should advance horizontal cards.
+   {
+     const c=await browser.newContext({viewport:{width:375,height:900},reducedMotion:'reduce',hasTouch:true,isMobile:true});
+     const p=await c.newPage();
+     try {
+       await p.goto('http://127.0.0.1:8762/services.html',{waitUntil:'domcontentloaded',timeout:50000});
+       const track=p.locator('#sv-exterior-cards');
+       const start=await track.evaluate(e=>e.scrollLeft);
+       await p.locator('#sv-card-next').click();
+       await p.waitForTimeout(800);
+       const end=await track.evaluate(e=>e.scrollLeft);
+       assert.ok(end>start+10,'mobile Services carousel did not advance');
+       results.push({label:'services-mobile-carousel',start,end});
+       console.log('PASS services mobile carousel');
+     }catch(e){failures.push('services mobile carousel: '+e.message);console.error('FAIL',failures.at(-1));}
+     finally{await c.close();}
    }
    fs.writeFileSync(path.join(out,'report.json'),JSON.stringify({results,failures},null,2));
    if(failures.length){console.error('QA FAILURES',failures);process.exitCode=1;}
