@@ -309,7 +309,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
         function inquiryFocusables() {
             const modal = document.getElementById('inquiry-modal');
             return Array.from(modal.querySelectorAll(inquiryFocusableSelector)).filter(element => {
-                return element.getClientRects().length > 0 &&
+                return element.tabIndex >= 0 && element.getClientRects().length > 0 &&
                     getComputedStyle(element).visibility !== 'hidden' &&
                     !element.closest('[inert], [disabled]');
             });
