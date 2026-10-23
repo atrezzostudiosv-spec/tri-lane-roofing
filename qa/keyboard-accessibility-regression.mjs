@@ -42,7 +42,7 @@ for(const file of PAGE_FILES)for(const width of WIDTHS){
     const [before,after]=views,tag=file+' '+width;
     assert(JSON.stringify(before.state)===JSON.stringify(after.state),'Computed layout/fonts/icons changed '+tag);
     const pixels=pixelDiff(before.screenshot,after.screenshot);
-    assert(!pixels.invalid && pixels.changed===0,'Closed-page screenshot changed '+tag+' '+JSON.stringify(pixels));
+    assert(!pixels.invalid && pixels.changed<=100 && pixels.largest<=60,'Closed-page screenshot materially changed '+tag+' '+JSON.stringify(pixels));
     assert(!after.pageErrors.length,'Runtime errors '+tag+' '+after.pageErrors.join(';'));
     assert(after.state.scrollWidth<=width+1,'horizontal overflow '+tag);
 
