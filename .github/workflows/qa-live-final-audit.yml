@@ -1,0 +1,28 @@
+name: Temporary full public-site delivery audit
+on:
+  push:
+    branches: [audit-final-live-readonly-20261023]
+permissions:
+  contents: read
+jobs:
+  site-audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 26
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser and a11y audit tools
+        run: npm install --no-save playwright@1.56.1 axe-core@4.10.3
+      - name: Audit live public website without performing actual form submissions
+        run: |
+          set -euo pipefail
+          mkdir -p audit-results
+          node qa/live-final-audit-20261023.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tri-lane-complete-live-delivery-audit-20261023
+          path: audit-results/
+          if-no-files-found: ignore
