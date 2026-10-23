@@ -58,6 +58,17 @@ Evidence: https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/
 - Prior single-run mobile snapshot: About 67/100, LCP 7.973s; Services 70/100, LCP 9.189s. Comparing a single older run with a new 3-run median is **directional evidence only**, not an isolated A/B benchmark or actual user experience.
 - Both pages still exceed the generally recommended mobile LCP target of 2.5s; additional optimizations must preserve approved typography, icons, colors, animation and design. Avoid removing render-critical stylesheets after Gallery visual parity regression failed.
 
+## About and Services secondary-image optimization — verified 2026-10-23
+
+- [PR #21](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/pull/21) integrates existing same-source Gallery WebP images for the two large secondary photos, without replacing media, labels or visual layout.
+  - About section photo on standard mobile 375px: original home-gallery-secondary.jpg (396,897 bytes) → gallery-secondary-480.webp (95,782 bytes). Native JPG deliberately retained at tablet 768px for fidelity; source selection scales with viewport/device density.
+  - Services roofing photo on standard mobile 375px: original home-gallery-feature.jpg (339,783 bytes) → gallery-feature-480.webp (74,284 bytes). A 900w version (247,100 bytes) is selected for larger screens or 375px DPR2, rather than the original JPEG.
+- [PR #22](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/pull/22) allows About 375px DPR2 to select gallery-secondary-900.webp (306,566 bytes) instead of reverting to the 396,897-byte original; the native JPG remains selected at 375px DPR3 and at 768px tablet for source fidelity.
+- [Local Chromium 8/8 responsive verification](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/39910808947) at 375/768/1024/1440px for About and Services, with image quality screening and unchanged computed layout/fonts/icons, navigation and inquiry wizard.
+- [Retina 7/7 comparison](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/39911287237) across mobile DPR1/2/3 and tablet/desktop confirmed source selection, image appearance and identical layout.
+- [Live published GitHub Pages audit](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/39911593823): **10/10** browser scenarios passed for the two pages, including standard and DPR2 mobile, tablet, and desktop. No missing local images, unexpected mobile overflow, JavaScript errors, altered icon/font families or broken inquiry modal.
+- These are *transfer-size improvements for secondary images*, not measured changes to the pages' Largest Contentful Paint. Previous LCP benchmark from the hero-image optimization remains the current performance reference.
+
 ## Status and next prioritized actions
 
 | Area | Status | Remaining work |
@@ -65,7 +76,7 @@ Evidence: https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/
 | Navigation and core UI | VERIFIED in Chromium | Manual real-device and keyboard-only review recommended |
 | Automated A/AA accessibility scan | PASS for tested states | Manual screen-reader, keyboard focus and motion review not fully verified |
 | Form validation and client-side mocked delivery | VERIFIED | Replace Atrezzo staging inbox only after client approves and activates their destination; re-test actual delivery |
-| Responsive image selection | VERIFIED | Gallery hero and seven tiles optimized with responsive WebPs; full-size originals preserved in lightbox; continue evaluating other pages |
+| Responsive image selection | VERIFIED | Gallery images plus About/Services hero and secondary photos now have validated responsive variants; original source assets, high-detail fallbacks and lightbox images preserved |
 | Gallery mobile performance | IMPROVED, FURTHER WORK RECOMMENDED | Mobile 3-run Lighthouse median 79/100, LCP 4.718 s; remaining render-blocking CSS/fonts and large images merit isolated testing |
 | About/Services mobile performance | IMPROVED; FURTHER WORK RECOMMENDED | Post-hero mobile lab medians: About 72/100, LCP 5.492s; Services 75/100, LCP 5.801s. Do not change typography, icons or visual design |
 | Contact delivery to client inbox | NOT VERIFIED | Atrezzo staging inbox is temporary; do not imply messages reach Tri-Lane |
