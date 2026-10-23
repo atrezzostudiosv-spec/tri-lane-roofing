@@ -1,0 +1,71 @@
+name: Temporary About retina media fidelity QA
+on:
+  push:
+    branches: [refine-about-retina-images-20261023]
+permissions:
+  contents: read
+jobs:
+  retina-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.56.1 pngjs@7.0.0
+      - name: Validate retina selection and exact layout relative to approved main
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git worktree add --detach /tmp/tri-lane-livebase origin/main
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory /tmp/tri-lane-livebase >/tmp/base-retina.log 2>&1 &
+          python3 -m http.server 8766 --bind 127.0.0.1 --directory . >/tmp/candidate-retina.log 2>&1 &
+          sleep 2
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright';
+          import { PNG } from 'pngjs';
+          const cases=[[375,1],[375,2],[375,3],[768,1],[768,2],[1024,1],[1440,1]];
+          const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+          const failed=[];let count=0;
+          try {
+            for(const [width,dpr] of cases) {
+              const ctx=await browser.newContext({viewport:{width,height:900},deviceScaleFactor:dpr,reducedMotion:'reduce'});
+              try {
+                const responses=[];
+                for(const port of [8765,8766]){
+                  const page=await ctx.newPage();
+                  const err=[];page.on('pageerror',e=>err.push(e.message));
+                  await page.goto('http://127.0.0.1:'+port+'/about.html',{waitUntil:'networkidle',timeout:60000});
+                  await page.evaluate(()=>document.fonts.ready);
+                  const img=page.locator('.at-about-company-photo img');
+                  await img.scrollIntoViewIfNeeded();await img.evaluate(x=>x.decode());
+                  const metric=await page.evaluate(()=>{
+                    const el=document.querySelector('.at-about-company-photo img'),s=getComputedStyle(el),b=el.getBoundingClientRect();
+                    return {w:b.width,h:b.height,x:b.x,y:b.y,scrollWidth:document.documentElement.scrollWidth,font:s.fontFamily,color:s.color,fit:s.objectFit,icon:getComputedStyle(document.querySelector('i.fa-solid')).fontFamily,src:el.currentSrc.split('/').at(-1)};
+                  });
+                  const snap=PNG.sync.read(await img.screenshot({animations:'disabled',timeout:45000}));
+                  responses.push({metric,snap,err});await page.close();
+                }
+                const [a,b]=responses;const label=width+'px DPR'+dpr;
+                const v1={...a.metric},v2={...b.metric};delete v1.src;delete v2.src;
+                if(JSON.stringify(v1)!==JSON.stringify(v2))failed.push('layout mismatch '+label);
+                if(b.metric.scrollWidth>width+1)failed.push('horizontal overflow '+label);
+                if(JSON.stringify(a.err)!==JSON.stringify(b.err))failed.push('script changed '+label);
+                if(a.snap.width!==b.snap.width||a.snap.height!==b.snap.height)failed.push('image screenshot dimension change '+label);
+                let sum=0;
+                if(a.snap.width===b.snap.width&&a.snap.height===b.snap.height)for(let i=0;i<a.snap.data.length;i+=4)for(let k=0;k<3;k++)sum+=Math.abs(a.snap.data[i+k]-b.snap.data[i+k]);
+                const delta=sum/(3*a.snap.width*a.snap.height);
+                if(delta>7.5)failed.push('photo visual RGB mismatch '+label+' '+delta);
+                if(width===375&&dpr===2&&!b.metric.src.includes('gallery-secondary-900.webp'))failed.push('Retina mobile picked oversized source '+label+' '+b.metric.src);
+                if(width===768&&!b.metric.src.includes('home-gallery-secondary.jpg'))failed.push('Original tablet image lost '+label);
+                console.log('ABOUT RETINA VALIDATION '+JSON.stringify({width,dpr,original:a.metric.src,current:b.metric.src,avgRGB:Number(delta.toFixed(3)),sameGeometry:JSON.stringify(v1)===JSON.stringify(v2)}));
+                count++;
+              }finally{await ctx.close()}
+            }
+          }finally{await browser.close()}
+          console.log('ABOUT RETINA SUMMARY '+JSON.stringify({count,failed}));
+          if(failed.length)process.exitCode=1;
+          JS
