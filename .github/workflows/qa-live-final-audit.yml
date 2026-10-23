@@ -20,6 +20,7 @@ jobs:
           set -euo pipefail
           mkdir -p audit-results
           node qa/live-final-audit-20261023.mjs
+          node qa/live-final-audit-followup.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
