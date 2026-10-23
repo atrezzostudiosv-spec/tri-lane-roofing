@@ -34,20 +34,40 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
 
         function toggleMobileMenu() {
             const isExpanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
-            mobileMenuBtn.setAttribute('aria-expanded', !isExpanded);
-            mobileMenu.classList.toggle('hidden');
-            menuIconOpen.classList.toggle('hidden');
-            menuIconClose.classList.toggle('hidden');
+            if (isExpanded) {
+                closeMobileMenu();
+                return;
+            }
+            mobileMenuBtn.setAttribute('aria-expanded', 'true');
+            mobileMenu.classList.remove('hidden');
+            menuIconOpen.classList.add('hidden');
+            menuIconClose.classList.remove('hidden');
         }
 
-        function closeMobileMenu() {
+        function closeMobileMenu(restoreFocus = false) {
             mobileMenuBtn.setAttribute('aria-expanded', 'false');
             mobileMenu.classList.add('hidden');
             menuIconOpen.classList.remove('hidden');
             menuIconClose.classList.add('hidden');
+            if (restoreFocus && mobileMenuBtn.getClientRects().length) {
+                mobileMenuBtn.focus({ preventScroll: true });
+            }
         }
 
         mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+        // A disclosure menu does not trap Tab; Escape dismisses it and restores
+        // focus to the button that opened it, including on tablet layouts.
+        document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Escape') return;
+            const inquiry = document.getElementById('inquiry-modal');
+            if (inquiry && !inquiry.classList.contains('hidden')) {
+                event.preventDefault();
+                closeInquiryModal();
+            } else if (!mobileMenu.classList.contains('hidden')) {
+                event.preventDefault();
+                closeMobileMenu(true);
+            }
+        });
 
         /* ==================== 3. GALLERY & LIGHTBOX DATA ==================== */
         const galleryProjects = [
@@ -278,6 +298,52 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
         /* ==================== 5. MULTISTEP WIZARD ASSISTANT ==================== */
         let currentWizStep = 1;
         let selectedService = '';
+        let inquiryReturnFocus = null;
+        let inquiryPreviousOverflow = '';
+        let inquiryInertSiblings = [];
+
+        const inquiryFocusableSelector =
+            'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), ' +
+            'select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+        function inquiryFocusables() {
+            const modal = document.getElementById('inquiry-modal');
+            return Array.from(modal.querySelectorAll(inquiryFocusableSelector)).filter(element => {
+                return element.getClientRects().length > 0 &&
+                    getComputedStyle(element).visibility !== 'hidden' &&
+                    !element.closest('[inert], [disabled]');
+            });
+        }
+
+        function focusInquiryHeading() {
+            const heading = document.getElementById('assistant-title');
+            heading.setAttribute('tabindex', '-1');
+            heading.focus({ preventScroll: true });
+        }
+
+        // Keep Tab and Shift+Tab within the visible dialog; never allow
+        // keyboard users to move to the page behind the modal.
+        document.addEventListener('keydown', (event) => {
+            if (event.key !== 'Tab') return;
+            const modal = document.getElementById('inquiry-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+            const items = inquiryFocusables();
+            if (!items.length) {
+                event.preventDefault();
+                focusInquiryHeading();
+                return;
+            }
+            const first = items[0];
+            const last = items[items.length - 1];
+            const active = document.activeElement;
+            if (event.shiftKey && (active === first || !modal.contains(active))) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && (active === last || !modal.contains(active))) {
+                event.preventDefault();
+                first.focus();
+            }
+        });
 
         function openInquiryModal(preselectedService = '') {
             selectedService = preselectedService || '';
@@ -307,14 +373,39 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
                 wizardStatus.replaceChildren();
                 wizardStatus.className = 'p-3 rounded text-xs hidden';
             }
+            const modal = document.getElementById('inquiry-modal');
+            if (!modal.classList.contains('hidden')) return;
+            inquiryReturnFocus = document.activeElement instanceof HTMLElement
+                ? document.activeElement : null;
+            inquiryPreviousOverflow = document.body.style.overflow;
+            if (!mobileMenu.classList.contains('hidden')) closeMobileMenu();
             updateWizardUI();
-            document.getElementById('inquiry-modal').classList.remove('hidden');
+            modal.setAttribute('aria-labelledby', 'assistant-title');
+            modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            // Inert prevents assistive technology and keyboard navigation from
+            // reaching anything behind the dialog. Restore only what we changed.
+            inquiryInertSiblings = [];
+            for (const element of document.body.children) {
+                if (element === modal || element.contains(modal) || element.inert) continue;
+                element.inert = true;
+                inquiryInertSiblings.push(element);
+            }
+            focusInquiryHeading();
         }
 
         function closeInquiryModal() {
-            document.getElementById('inquiry-modal').classList.add('hidden');
-            document.body.style.overflow = '';
+            const modal = document.getElementById('inquiry-modal');
+            if (modal.classList.contains('hidden')) return;
+            modal.classList.add('hidden');
+            document.body.style.overflow = inquiryPreviousOverflow;
+            inquiryInertSiblings.forEach(element => { element.inert = false; });
+            inquiryInertSiblings = [];
+            if (inquiryReturnFocus && inquiryReturnFocus.isConnected &&
+                inquiryReturnFocus.getClientRects().length) {
+                inquiryReturnFocus.focus({ preventScroll: true });
+            }
+            inquiryReturnFocus = null;
         }
 
         function selectWizardService(service) {
@@ -338,6 +429,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             if (currentWizStep < 4) {
                 currentWizStep++;
                 updateWizardUI();
+                focusInquiryHeading();
             } else if (currentWizStep === 4) {
                 submitWizardInquiry();
             }
@@ -347,6 +439,7 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             if (currentWizStep > 1) {
                 currentWizStep--;
                 updateWizardUI();
+                focusInquiryHeading();
             }
         }
 
