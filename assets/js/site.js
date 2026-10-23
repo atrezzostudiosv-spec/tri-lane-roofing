@@ -404,6 +404,9 @@ window.addEventListener('DOMContentLoaded', updateActiveNavigation);
             if (inquiryReturnFocus && inquiryReturnFocus.isConnected &&
                 inquiryReturnFocus.getClientRects().length) {
                 inquiryReturnFocus.focus({ preventScroll: true });
+            } else if (mobileMenuBtn.getClientRects().length) {
+                // A CTA inside the now-closed mobile drawer is no longer visible.
+                mobileMenuBtn.focus({ preventScroll: true });
             }
             inquiryReturnFocus = null;
         }
