@@ -1,0 +1,27 @@
+name: Temporary About Services secondary photo QA
+on:
+  push:
+    branches: [optimize-secondary-photos-20261023]
+permissions:
+  contents: read
+jobs:
+  visual-parity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright@1.56.1 pngjs@7.0.0
+      - name: Compare original versus candidate images and site functionality on four viewports
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git worktree add --detach /tmp/tri-lane-base-qa origin/main
+          python3 -m http.server 8765 --directory /tmp/tri-lane-base-qa --bind 127.0.0.1 >/tmp/tri-lane-base.log 2>&1 &
+          python3 -m http.server 8766 --directory . --bind 127.0.0.1 >/tmp/tri-lane-candidate.log 2>&1 &
+          sleep 3
+          node qa/secondary-images-qa.mjs
