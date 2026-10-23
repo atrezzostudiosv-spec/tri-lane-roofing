@@ -69,12 +69,21 @@ Evidence: https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/
 - [Live published GitHub Pages audit](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/39911593823): **10/10** browser scenarios passed for the two pages, including standard and DPR2 mobile, tablet, and desktop. No missing local images, unexpected mobile overflow, JavaScript errors, altered icon/font families or broken inquiry modal.
 - These are *transfer-size improvements for secondary images*, not measured changes to the pages' Largest Contentful Paint. Previous LCP benchmark from the hero-image optimization remains the current performance reference.
 
+## Keyboard access fixes — verified on live preview 2026-10-23
+
+- [PR #24](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/pull/24): shared JavaScript fixes inquiry-dialog focus placement, Tab/Shift+Tab confinement, Escape dismissal, focus return to the opener, four-step wizard focus continuity, keyboard Escape closing of the responsive menu, and focus restoration after the menu closes. Background is temporarily `inert` while the inquiry modal is open and restored on close.
+- [PR #25](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/pull/25): cache-busting URL for that exact existing JavaScript across all five HTML pages, without changing rendered markup or styling.
+- [Development Chrome parity](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/39917407015): **20/20** page–viewport cases at 375, 768, 1024, 1440 px. Verified 22 consecutive Tab presses remain within the active modal, Shift+Tab boundary, step navigation, Escape, focus return, inert restoration, menu keyboard interaction and no JavaScript errors. Computed design properties matched current approved site; 18 initial screenshots were pixel-exact, 2 differed by only 72 RGB channels without geometry differences.
+- [Published GitHub Pages verification](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/39918183226): **20/20** page–viewport keyboard cases and **5/5 axe-core A/AA scans** on mobile with inquiry modal open. No failures. Public script URL verified on all five pages.
+- This is a focused browser/automated accessibility verification, **not** a claim of full WCAG 2.2 AA conformance. A manual screen-reader evaluation on physical devices remains recommended before official client launch.
+- No brand fonts, icons, CSS, photo assets, layout, text, email recipient, SEO-indexing policy or domain publishing were changed in this phase.
+
 ## Status and next prioritized actions
 
 | Area | Status | Remaining work |
 |---|---|---|
-| Navigation and core UI | VERIFIED in Chromium | Manual real-device and keyboard-only review recommended |
-| Automated A/AA accessibility scan | PASS for tested states | Manual screen-reader, keyboard focus and motion review not fully verified |
+| Navigation and core UI | VERIFIED including keyboard tests (live) | Responsive menu and inquiry focus behavior passed 20/20 live viewport cases; physical-device manual review remains recommended |
+| Automated A/AA accessibility scan | PASS for tested states including open inquiry | 5/5 latest live mobile modal scans passed; manual assistive-tech and physical-device review still needed for full WCAG assessment |
 | Form validation and client-side mocked delivery | VERIFIED | Replace Atrezzo staging inbox only after client approves and activates their destination; re-test actual delivery |
 | Responsive image selection | VERIFIED | Gallery images plus About/Services hero and secondary photos now have validated responsive variants; original source assets, high-detail fallbacks and lightbox images preserved |
 | Gallery mobile performance | IMPROVED, FURTHER WORK RECOMMENDED | Mobile 3-run Lighthouse median 79/100, LCP 4.718 s; remaining render-blocking CSS/fonts and large images merit isolated testing |
