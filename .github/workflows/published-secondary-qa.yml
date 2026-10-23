@@ -1,0 +1,73 @@
+name: Temporary published secondary-photo verification
+on:
+  push:
+    branches: [audit-secondary-published-20261023]
+permissions:
+  contents: read
+jobs:
+  published:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check actual published About and Services release
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 30); do
+            if curl -fsSL --connect-timeout 12 --max-time 30 "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/about.html" -o /tmp/tri-about.html &&
+               curl -fsSL --connect-timeout 12 --max-time 30 "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/services.html" -o /tmp/tri-services.html &&
+               grep -q 'gallery-secondary-900.webp 900w' /tmp/tri-about.html &&
+               grep -q 'gallery-feature-900.webp 900w' /tmp/tri-services.html &&
+               grep -q 'max-width: 900px) 1250px' /tmp/tri-about.html; then
+                 echo "PUBLISHED MEDIA MARKUP VERIFIED";exit 0
+            fi
+            echo "Published latest version not visible yet: $attempt";sleep 10
+          done
+          echo "::error::Target release not visible";exit 1
+      - run: npm install --no-save playwright@1.56.1
+      - name: Verify real image selection, responsive and wizard states on GitHub Pages
+        run: |
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright';
+          const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+          const entries=[
+            {page:'about.html',selector:'.at-about-company-photo img',expected:{'375:1':'gallery-secondary-480.webp','375:2':'gallery-secondary-900.webp','768:1':'home-gallery-secondary.jpg','1024:1':'gallery-secondary-480.webp','1440:1':'gallery-secondary-900.webp'}},
+            {page:'services.html',selector:'.sv-roofing img',expected:{'375:1':'gallery-feature-480.webp','375:2':'gallery-feature-900.webp','768:1':'gallery-feature-900.webp','1024:1':'gallery-feature-900.webp','1440:1':'gallery-feature-900.webp'}}
+          ];
+          const failures=[];let scenarios=0;
+          try{
+           for(const item of entries)for(const [key,expected] of Object.entries(item.expected)){
+             const [width,dpr]=key.split(':').map(Number);
+             const context=await browser.newContext({viewport:{width,height:900},deviceScaleFactor:dpr,reducedMotion:'reduce'});
+             try{
+               const page=await context.newPage();
+               page.on('pageerror',e=>failures.push(item.page+' '+key+' JS '+e.message));
+               const resp=await page.goto('https://atrezzostudiosv-spec.github.io/tri-lane-roofing/'+item.page,{waitUntil:'networkidle',timeout:65000});
+               if(resp?.status()!==200)throw Error('HTTP '+resp?.status());
+               const pic=page.locator(item.selector);
+               await pic.scrollIntoViewIfNeeded();await pic.evaluate(x=>x.decode());
+               const state=await page.evaluate(selector=>{
+                const img=document.querySelector(selector);
+                return {src:new URL(img.currentSrc).pathname.split('/').at(-1),width:img.naturalWidth,height:img.naturalHeight,
+                  alt:img.alt,scrollWidth:document.documentElement.scrollWidth,noindex:document.querySelector('meta[name=robots]')?.content,
+                  font:getComputedStyle(document.querySelector('h1')).fontFamily,icon:getComputedStyle(document.querySelector('i.fa-solid')).fontFamily};
+               },item.selector);
+               if(state.src!==expected)failures.push(item.page+' '+key+' requested '+state.src+' expected '+expected);
+               if(state.scrollWidth>width+1)failures.push(item.page+' '+key+' has horizontal scroll');
+               if(!state.alt.toLowerCase().includes('illustrative')&&!state.alt.toLowerCase().includes('ai-generated'))failures.push(item.page+' '+key+' missing illustration disclosure');
+               if(!state.noindex?.includes('noindex'))failures.push(item.page+' '+key+' missing noindex');
+               if(!state.font.includes('Barlow Condensed')||!state.icon.includes('Font Awesome'))failures.push(item.page+' '+key+' fonts/icons not loaded');
+               await page.evaluate(()=>openInquiryModal());
+               if(await page.locator('#inquiry-modal').evaluate(x=>x.classList.contains('hidden')))failures.push(item.page+' '+key+' inquiry failed to open');
+               await page.evaluate(()=>closeInquiryModal());
+               scenarios++;
+               console.log('PUBLISHED IMAGE CHECK '+JSON.stringify({page:item.page,width,dpr,selected:state.src,naturalWidth:state.width,scrollWidth:state.scrollWidth}));
+             }finally{await context.close()}
+           }
+          }finally{await browser.close()}
+          console.log('PUBLISHED FINAL SUMMARY '+JSON.stringify({scenarios,failures}));
+          if(failures.length)process.exitCode=1;
+          JS
