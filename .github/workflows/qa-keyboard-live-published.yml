@@ -1,0 +1,105 @@
+name: Temporary public keyboard release QA
+on:
+  push:
+    branches: [audit-live-keyboard-release-20261023]
+permissions:
+  contents: read
+jobs:
+  live:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 23
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Require all public pages to reference the latest keyboard script
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 40); do
+            count=0
+            for file in index about services gallery contact; do
+              if curl -fsSL --connect-timeout 12 --max-time 30 "https://atrezzostudiosv-spec.github.io/tri-lane-roofing/${file}.html" -o "/tmp/${file}-kbd.html" &&
+                 grep -q 'site.js?v=inquiry-keyboard-4' "/tmp/${file}-kbd.html"; then count=$((count+1)); fi
+            done
+            if [ "$count" -eq 5 ] &&
+               curl -fsSL --connect-timeout 12 --max-time 30 'https://atrezzostudiosv-spec.github.io/tri-lane-roofing/assets/js/site.js?v=inquiry-keyboard-4' -o /tmp/keyboard-site.js &&
+               grep -q 'inquiryInertSiblings' /tmp/keyboard-site.js &&
+               grep -q 'focusInquiryHeading' /tmp/keyboard-site.js; then
+              echo 'ALL FIVE PUBLISHED PAGES LOAD THE NEW ACCESSIBLE KEYBOARD SCRIPT'
+              exit 0
+            fi
+            echo "Deployment not yet fully propagated: attempt $attempt, pages $count"
+            sleep 10
+          done
+          echo "::error::Latest keyboard release not confirmed across all public pages"
+          exit 1
+      - run: npm install --no-save playwright@1.56.1 axe-core@4.10.3
+      - name: Audit focus boundaries, Escape, responsive menus and dialog accessibility on live demo
+        run: |
+          node --input-type=module <<'NODE'
+          import {chromium} from 'playwright';
+          import axe from 'axe-core';
+          const base='https://atrezzostudiosv-spec.github.io/tri-lane-roofing/';
+          const paths=['index.html','about.html','services.html','gallery.html','contact.html'];
+          const widths=[375,768,1024,1440];const failures=[];let verified=0,axeScans=0;
+          const assert=(v,msg)=>{if(!v)throw Error(msg)};
+          const browser=await chromium.launch({executablePath:'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+          try{
+           for(const path of paths)for(const width of widths){
+            const context=await browser.newContext({viewport:{width,height:900},deviceScaleFactor:1,reducedMotion:'reduce'});
+            try{
+             const page=await context.newPage(),errors=[];
+             page.on('pageerror',e=>errors.push(e.message));
+             const response=await page.goto(base+path,{waitUntil:'networkidle',timeout:70000});
+             assert(response?.status()===200,'HTTP failed '+path);
+             const basic=await page.evaluate(()=>({sw:document.documentElement.scrollWidth,h1:document.querySelectorAll('h1').length,
+                 robots:document.querySelector('meta[name=robots]')?.content,icon:getComputedStyle(document.querySelector('i.fa-solid')).fontFamily}));
+             assert(basic.sw<=width+1,'Overflow '+path+' '+width);
+             assert(basic.h1===1,'Headings '+path+' '+width);
+             assert(basic.robots?.includes('noindex'),'Prospect noindex missing '+path);
+             assert(basic.icon?.includes('Font Awesome'),'Icon font changed '+path);
+             const menu=page.locator('#mobile-menu-btn');
+             if(await menu.isVisible()){
+               await menu.focus();await page.keyboard.press('Enter');
+               assert(await page.locator('#mobile-menu').isVisible(),'Mobile menu cannot open '+path+' '+width);
+               await page.keyboard.press('Escape');
+               assert(!await page.locator('#mobile-menu').isVisible(),'Mobile menu Escape failure '+path+' '+width);
+               assert(await page.evaluate(()=>document.activeElement?.id)==='mobile-menu-btn','Mobile focus not returned '+path);
+             }
+             const button=page.locator('button[onclick="openInquiryModal()"]:visible').first();
+             assert(await button.count()===1,'Missing inquiry CTA '+path);
+             await button.click();
+             const modal=page.locator('#inquiry-modal');
+             assert(await modal.isVisible(),'Dialog did not open '+path);
+             assert(await page.evaluate(()=>document.activeElement?.id)==='assistant-title','Heading focus missing '+path+' '+width);
+             assert(await modal.getAttribute('aria-labelledby')==='assistant-title','Dialog label missing '+path);
+             const bg=await page.evaluate(()=>[...document.body.children].filter(x=>x.id!=='inquiry-modal'&&!x.contains(document.getElementById('inquiry-modal'))&&x.tagName!=='SCRIPT').every(x=>x.inert));
+             assert(bg,'Background not inert '+path+' '+width);
+             for(let i=0;i<20;i++){
+                await page.keyboard.press('Tab');
+                assert(await page.evaluate(()=>document.getElementById('inquiry-modal').contains(document.activeElement)),'Tab escaped '+path+' '+width+' iteration '+i);
+             }
+             await page.locator('#inquiry-modal button[aria-label="Close Modal"]').focus();
+             await page.keyboard.press('Shift+Tab');
+             assert(await page.evaluate(()=>document.getElementById('inquiry-modal').contains(document.activeElement)),'Shift Tab escaped '+path);
+             if(width===375){
+               await page.addScriptTag({content:axe.source});
+               const scan=await page.evaluate(async()=>axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa']},resultTypes:['violations']}));
+               assert(!scan.violations.length,'axe issue '+path+' '+scan.violations.map(x=>x.id).join(','));
+               axeScans++;
+             }
+             await page.keyboard.press('Escape');
+             assert(!await modal.isVisible(),'Escape did not close dialog '+path);
+             assert(await button.evaluate(el=>document.activeElement===el),'Focus not restored '+path);
+             assert(await page.evaluate(()=>[...document.body.children].every(x=>!x.inert)),'Inert remains after close '+path);
+             assert(!errors.length,'Javascript errors '+path+' '+errors.join(';'));
+             console.log('LIVE KEYBOARD PASS '+JSON.stringify({path,width,axeCheck:width===375}));
+             verified++;
+            }catch(e){failures.push({path,width,error:String(e)});console.log('LIVE KEYBOARD FAIL '+path+' '+width+' '+String(e));}
+            finally{await context.close();}
+           }
+          }finally{await browser.close()}
+          console.log('LIVE KEYBOARD FINAL '+JSON.stringify({verified,expected:20,axeScans,failures}));
+          if(failures.length||verified!==20||axeScans!==5)process.exitCode=1;
+          NODE
