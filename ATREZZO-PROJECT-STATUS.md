@@ -46,6 +46,15 @@ Los estados posibles y únicos de cada fase son: **PENDIENTE · EN PROCESO · EN
 
 Medianas móviles Lighthouse previas: Home **75**, About **72**, Services **75**, Gallery **79**; Contact **87** en una prueba. Los LCP medidos en laboratorio siguen por encima del ideal en varias páginas. Son resultados de laboratorio con variabilidad, **no** una promesa de velocidad ni motivo para reabrir automáticamente la optimización. Ver evidencias y metodología en [informe técnico](docs/final-qa-closeout-2026-10-22.md).
 
+### Validación puntual solicitada del Home móvil — 2026-10-23
+
+- A petición expresa del usuario, se volvió a ejecutar **el trabajo existente de Lighthouse**, sin modificar código, CSS, imágenes, diseño ni formularios. [Evidencia: ejecución 39812726527, intento 2](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/39812726527/attempts/2).
+- Tres ejecuciones móviles sobre el Home público `index.html` con Lighthouse 12.8.2: rendimiento **64 / 61 / 63**, mediana **63/100**; LCP **8.298 / 8.603 / 8.366 s**, mediana **8.366 s**; FCP mediano **3.865 s**. TBT **0 / 56 / 52 ms**.
+- Oportunidad de recursos de bloqueo de renderizado presente en los tres casos: estimación **2.428 / 2.961 / 2.826 s**; imágenes responsivas **790 / 760 / 760 ms** en el modelo de oportunidades de Lighthouse. Son **ahorros estimados**, no mejoras logradas ni diagnóstico causal aislado.
+- Medición informada por PageSpeed del mismo día: móvil **65/100**, LCP **7.7 s**; escritorio **86/100**, LCP **2.5 s**; no confundir sus condiciones/versiones con el trabajo repetido de Lighthouse. El trabajo repetido también registró desktop **80/100**, LCP **3.412 s**.
+- Referencia anterior (22 de octubre), mismo trabajo de laboratorio: móvil **64 / 75 / 75** (mediana **75/100**) y LCP **8.295 / 6.229 / 6.269 s** (mediana **6.269 s**). Diferencias entre fechas no prueban regresión causada por código ni ganancia futura de optimizar una sola categoría.
+- **Decisión:** no cambiar la demo por perseguir una puntuación puntual. El LCP móvil sigue por encima del ideal. Una modificación nueva solo se justificaría mediante comparación controlada, calidad visual y pruebas funcionales; los ensayos previos de carga de CSS que alteraron la apariencia no se deben repetir sin planteamiento nuevo. La fase 05 permanece **CERRADA**, y la fase operativa sigue siendo 08.
+
 ### Límites y pruebas NO comprobadas
 
 - Los análisis automatizados axe no acreditan conformidad integral WCAG 2.2 AA ni sustituyen una revisión manual de lector de pantalla o de dispositivos físicos. Esta revisión se reservará para una necesidad técnica confirmada o la preparación de producción, sin rehacer las fases completas.
@@ -68,6 +77,7 @@ Medianas móviles Lighthouse previas: Home **75**, About **72**, Services **75**
 | Fecha | Fase | Causa justificada | Alcance limitado | Cierre |
 |---|---|---|---|---|
 | 2026-10-23 | 07. Teclado | Se detectó un fallo reproducible de foco en el asistente y de Escape en el menú durante la auditoría. | Solo `assets/js/site.js`, sin CSS, HTML ni assets. | **CERRADA**, PR #24 y 20/20 + 5/5 pruebas públicas. |
+| 2026-10-23 | 05. Rendimiento Home (comprobación puntual) | Solicitud expresa del usuario tras PageSpeed móvil 65. | Tres nuevas ejecuciones Lighthouse móviles del Home, lectura del hero/CSS y comparación con referencia previa; **sin cambios en el sitio**. | **CERRADA como validación**, [run intento 2](https://github.com/atrezzostudiosv-spec/tri-lane-roofing/actions/runs/39812726527/attempts/2); fase 05 global permanece cerrada. |
 
 ## ÚNICA siguiente acción autorizada por el estado
 
